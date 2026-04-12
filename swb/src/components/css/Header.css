@@ -1,0 +1,146 @@
+/* 기본 헤더 레이아웃 */
+.header {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 0 40px;
+  box-sizing: border-box; 
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 왼쪽 영역 (메뉴아이콘 + 로고) */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.menu-icon span {
+  width: 30px;
+  height: 3px;
+  background-color: #333;
+}
+
+.logo-image {
+  height: 55px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* 오른쪽 네비게이션 영역 (Home & Login 공통 스타일) */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Home과 Login의 스타일 통일 */
+.nav-item, 
+.login-btn {
+  /* 버튼/링크 기본 스타일 초기화 */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  
+  /* 텍스트 스타일 */
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: inherit; 
+  
+  /* 정렬 스타일 */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  
+  transition: opacity 0.2s;
+}
+
+.nav-item:hover,
+.login-btn:hover {
+  opacity: 0.7;
+}
+
+/* 아이콘 이미지 크기 공통 관리 */
+.nav-icon, 
+.lock-icon-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.login-wrapper {
+  position: relative;
+}
+
+/* 말풍선 박스 */
+.login-popup {
+  position: absolute;
+  top: 65px;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px 30px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid #f0f0f0;
+  z-index: 1000;
+  display: flex;
+}
+
+/* 상단 화살표 */
+.login-popup::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ffffff;
+}
+
+/* 카카오 로그인 버튼 (초기화 및 효과) */
+.kakao-login-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  transition: transform 0.15s ease;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.kakao-login-btn:hover {
+  transform: scale(1.03);
+}
+
+/* 카카오 이미지 */
+.kakao-btn-img {
+  width: 180px;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+}
