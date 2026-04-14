@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../css/Sidebar.css';
 
 
@@ -6,7 +7,7 @@ import ProfileIcon from '../images/user.png';
 import UploadIcon from '../images/upload.png';
 import ResultIcon from '../images/research.png';
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, isLoggedIn }) => {
   return (
     <>
 
@@ -18,12 +19,18 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className="user-profile">
             
             <img src={ProfileIcon} alt="Profile" className="profile-icon-img" />
-            <span>비회원 MENU</span>
+            <span>{isLoggedIn ? 'MENU' : '비회원 MENU'}</span>
           </div>
         </div>
         
         <nav className="sidebar-content">
           <ul>
+            {isLoggedIn && (
+              <li>
+                <img src={ProfileIcon} alt="Profile" className="menu-icon-img" />
+                <Link to="/profile" onClick={onClose}>내 프로필</Link>
+              </li>
+            )}
             <li>
               <img src={UploadIcon} alt="Upload" className="menu-icon-img" />
               <a href="#upload">파일 업로드</a>

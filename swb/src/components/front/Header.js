@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../css/Header.css';
 import Sidebar from './Sidebar'; 
 import Logo from '../images/Logo.png';
@@ -16,6 +17,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     };
 
   const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userInfo');
     setIsLoggedIn(false);
     alert("로그아웃 되었습니다.");
   };
@@ -57,16 +60,18 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
               <span></span>
             </div>
             <div className="logo">
-              <img src={Logo} alt="V&T Logo" className="logo-image" />
+              <Link to="/">
+                <img src={Logo} alt="V&T Logo" className="logo-image" />
+              </Link>
             </div>
           </div>
 
           <nav className="header-nav">
             
-            <a href="#home" className="nav-item">
+            <Link to="/" className="nav-item">
               <img src={HomeIcon} alt="Home" className="nav-icon" />
               <span>Home</span>
-            </a>
+            </Link>
 
             <div className="login-wrapper" ref={loginWrapperRef}>
               {isLoggedIn ? (
@@ -96,7 +101,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
       </header>
 
       
-      <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} isLoggedIn={isLoggedIn} />
     </>
   );
 };

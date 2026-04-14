@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
-        <p>Copyright © 2023 BRIX Templates</p>
+        <p>Copyright © 2026 V&T</p>
         <div className="footer-links">
           <span>All Rights Reserved</span> | 
           <a href="#terms">Terms and Conditions</a> | 
