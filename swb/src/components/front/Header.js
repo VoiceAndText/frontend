@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../css/Header.css';
 import Sidebar from './Sidebar'; 
 import Logo from '../images/Logo.png';
@@ -12,6 +12,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
 
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   const toggleSidebar = () => {
       setIsSidebarOpen(!isSidebarOpen);
     };
@@ -21,6 +23,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     localStorage.removeItem('userInfo');
     setIsLoggedIn(false);
     alert("로그아웃 되었습니다.");
+    navigate('/');
   };
 
   const handleKakaoLogin = () => {

@@ -33,7 +33,7 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn }) => {
             )}
             <li>
               <img src={UploadIcon} alt="Upload" className="menu-icon-img" />
-              <a href="#upload">파일 업로드</a>
+              <Link to="/upload" onClick={onClose}>파일 업로드</Link>
             </li>
             <li>
               <img src={ResultIcon} alt="Result" className="menu-icon-img" />
