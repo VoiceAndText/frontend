@@ -1,0 +1,136 @@
+/* 레이아웃 래퍼 */
+.upload-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 160px);
+  background-color: #fcfcfc;
+  padding: 40px 20px;
+}
+
+.upload-page-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  gap: 30px;
+}
+
+/* 왼쪽 업로드 블록 */
+.upload-left-block {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #4d4d4d;
+  border-radius: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 드롭존 영역 */
+.dropzone-area {
+  border: 2px dashed #b5b5c3;
+  border-radius: 12px;
+  padding: 50px 20px;
+  text-align: center;
+  margin-bottom: 30px;
+  transition: background-color 0.2s ease;
+}
+
+.dropzone-area.dragging {
+  background-color: #f0f0f5;
+  border-color: #a875ff;
+}
+
+.dropzone-title { font-size: 22px; font-weight: 600; color: #333; margin-bottom: 10px; }
+.dropzone-subtitle { font-size: 16px; color: #999; margin-bottom: 25px; }
+
+.browse-btn {
+  padding: 10px 25px;
+  font-size: 18px;
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.browse-btn:hover { background-color: #f9f9f9; }
+
+/* 업로드된 파일 섹션 */
+.uploaded-files-section { margin-bottom: 40px; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #333; }
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.file-info-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.file-name { font-size: 14px; font-weight: 500; color: #333; }
+.file-status { font-size: 12px; color: #999; }
+
+/* 미리보기 오디오 영역 */
+.audio-preview-container {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f1f3f5;
+  border-radius: 10px;
+}
+
+.audio-preview-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* 버튼 스타일 */
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+.delete-btn:hover { opacity: 0.6; }
+
+.bottom-action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: auto;
+}
+
+.btn-cancel, .btn-attach {
+  padding: 12px 40px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.btn-cancel { background-color: #ffffff; border: 1px solid #d9d9d9; }
+.btn-cancel:hover { background-color: #f5f5f5; }
+.btn-attach { background-color: #b2b2ca; border: none; color: #ffffff; }
+.btn-attach:hover { background-color: #9a9ab5; }
