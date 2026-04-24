@@ -19,8 +19,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     };
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userInfo');
+    sessionStorage.removeItem('isLoggedIn');
+    sessionStorage.removeItem('userInfo');
     setIsLoggedIn(false);
     alert("로그아웃 되었습니다.");
     navigate('/');

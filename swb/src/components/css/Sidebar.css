@@ -105,3 +105,91 @@
   color: #bbb;
   border-top: 1px solid #eee;
 }
+
+/* 관리자 메뉴 뼈대 */
+.sidebar-content li.admin-menu-li {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  cursor: default;
+}
+
+.sidebar-content li.admin-menu-li:hover {
+  background-color: transparent;
+}
+
+/* 관리자 메뉴 타이틀 영역 */
+.menu-item-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-item-wrapper:hover {
+  background-color: #f9f9f9;
+}
+
+.menu-item-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-arrow {
+  font-size: 10px;
+  color: #ccc;
+}
+
+/* 관리자 소메뉴 */
+.admin-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  background-color: #fcfcfc;
+}
+
+.admin-submenu.show {
+  max-height: 300px;
+}
+
+/* 관리자 소메뉴 텍스트 위치 조정 */
+.sidebar-content .admin-submenu li {
+  padding-left: 69px !important; 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.submenu-icon-img {
+  width: 18px;
+  height: 18px;
+}
+
+/* 테스트용 관리자 모드 버튼 영역 */
+.admin-mode-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-mode-toggle span {
+  font-size: 12px;
+  color: #888;
+  font-weight: bold;
+}
+
+/* 토글 스위치 버튼 애니메이션 디자인 */
+.switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #2196F3; }
+input:checked + .slider:before { transform: translateX(16px); }

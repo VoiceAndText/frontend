@@ -20,9 +20,9 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
         profileImage: "https://via.placeholder.com/150" // 실제 연동 시 카카오 URL로 대체됨
       };
 
-      // 로컬 스토리지에 저장 (새로고침 대비)
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userInfo', JSON.stringify(dummyUserInfo));
+      // 세션 스토리지에 저장 (새로고침 대비)
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('userInfo', JSON.stringify(dummyUserInfo));
 
       setUserInfo(dummyUserInfo);
       setIsLoggedIn(true);

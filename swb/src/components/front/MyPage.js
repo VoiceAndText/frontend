@@ -16,13 +16,13 @@ const MyPage = ({ userInfo, setIsLoggedIn }) => {
         const isConfirmed = window.confirm("정말로 탈퇴하시겠습니까? 모든 정보가 삭제됩니다.");
 
         if (isConfirmed) {
-        // 실제 가입이 아니므로 카카오 API 호출 대신 로컬 데이터만 삭제
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('userInfo');
-        
-        setIsLoggedIn(false);
-        alert("회원 탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.");
-        navigate('/');
+        // 실제 가입이 아니므로 카카오 API 호출 대신 세션 데이터만 삭제
+          sessionStorage.removeItem('isLoggedIn');
+          sessionStorage.removeItem('userInfo');
+          
+          setIsLoggedIn(false);
+          alert("회원 탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.");
+          navigate('/');
         }
     };
 

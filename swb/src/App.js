@@ -7,14 +7,15 @@ import Footer from './components/front/Footer.js';
 import KakaoCallback from './components/front/KakaoCallback.js';
 import MyPage from './components/front/MyPage.js';
 import UploadPage from './components/front/UploadPage.js';
+import Dashboard from './components/front/Dashboard.js';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    const savedLoginStatus = localStorage.getItem('isLoggedIn');
-    const savedUserInfo = localStorage.getItem('userInfo');
+    const savedLoginStatus = sessionStorage.getItem('isLoggedIn');
+    const savedUserInfo = sessionStorage.getItem('userInfo');
 
     if (savedLoginStatus === 'true' && savedUserInfo) {
       setIsLoggedIn(true);
@@ -31,6 +32,7 @@ function App() {
           <Route path="/auth/kakao/callback" element={<KakaoCallback setIsLoggedIn={setIsLoggedIn} setUserInfo={setUserInfo} />} />
           <Route path="/profile" element={<MyPage userInfo={userInfo} setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/upload" element={<UploadPage />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
         </Routes>
         <Footer />
       </div>
