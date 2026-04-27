@@ -1,0 +1,195 @@
+/* 배경 어둡게 처리 */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 100;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* 사이드바 본체 */
+.sidebar-menu {
+  position: fixed;
+  top: 0;
+  left: -300px; 
+  width: 280px;
+  height: 100%;
+  background-color: #fff;
+  z-index: 101;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-menu.open {
+  left: 0;
+}
+
+/* 사이드바 헤더 (프로필 영역) */
+.sidebar-header {
+  padding: 40px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #a3a1c2;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* 프로필 이미지 스타일 */
+.profile-icon-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #f0f0f0; 
+}
+
+/* 메뉴 리스트 영역 */
+.sidebar-content {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.sidebar-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-content li {
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-content li:hover {
+  background-color: #f9f9f9;
+}
+
+/* 메뉴 아이콘 이미지 공통 크기 설정 */
+.menu-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.sidebar-content a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  flex: 1; 
+}
+
+/* 푸터 영역 */
+.sidebar-footer {
+  padding: 20px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #bbb;
+  border-top: 1px solid #eee;
+}
+
+/* 관리자 메뉴 뼈대 */
+.sidebar-content li.admin-menu-li {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  cursor: default;
+}
+
+.sidebar-content li.admin-menu-li:hover {
+  background-color: transparent;
+}
+
+/* 관리자 메뉴 타이틀 영역 */
+.menu-item-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-item-wrapper:hover {
+  background-color: #f9f9f9;
+}
+
+.menu-item-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-arrow {
+  font-size: 10px;
+  color: #ccc;
+}
+
+/* 관리자 소메뉴 */
+.admin-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  background-color: #fcfcfc;
+}
+
+.admin-submenu.show {
+  max-height: 300px;
+}
+
+/* 관리자 소메뉴 텍스트 위치 조정 */
+.sidebar-content .admin-submenu li {
+  padding-left: 69px !important; 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.submenu-icon-img {
+  width: 18px;
+  height: 18px;
+}
+
+/* 테스트용 관리자 모드 버튼 영역 */
+.admin-mode-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-mode-toggle span {
+  font-size: 12px;
+  color: #888;
+  font-weight: bold;
+}
+
+/* 토글 스위치 버튼 애니메이션 디자인 */
+.switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #2196F3; }
+input:checked + .slider:before { transform: translateX(16px); }
