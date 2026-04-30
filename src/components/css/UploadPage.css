@@ -1,0 +1,185 @@
+.upload-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 160px);
+  background-color: #fcfcfc;
+  padding: 40px 20px;
+}
+
+.upload-page-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  gap: 30px;
+}
+
+.upload-left-block {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #4d4d4d;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropzone-area {
+  border: 2px dashed #b5b5c3;
+  border-radius: 12px;
+  padding: 50px 20px;
+  text-align: center;
+  margin-bottom: 30px;
+  background-color: #ffffff;
+}
+
+.dropzone-icon {
+  margin-bottom: 15px;
+}
+
+.dropzone-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.dropzone-subtitle {
+  font-size: 16px;
+  color: #999;
+  margin-bottom: 25px;
+}
+
+.dropzone-area.dragging {
+  border-color: #6a6a8c;
+  background-color: #f0f0fa;
+}
+
+.browse-btn {
+  padding: 10px 25px;
+  font-size: 18px;
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.browse-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.uploaded-files-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
+.file-icon {
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.file-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.file-status {
+  font-size: 13px;
+  color: #a0a0a0;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.delete-btn:hover svg {
+  stroke: #ff4d4f;
+}
+
+.bottom-action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: auto;
+}
+
+.btn-cancel, .btn-attach {
+  padding: 12px 40px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.btn-cancel {
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  color: #333;
+}
+
+.btn-attach {
+  background-color: #b2b2ca;
+  border: none;
+  color: #ffffff;
+}
+
+.btn-cancel:hover, .btn-attach:hover {
+  opacity: 0.8;
+}
+
+/* 우측 녹음 구역입니다 */
+.upload-right-block {
+  flex: 1;
+  border: 1px solid #4d4d4d;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 40px;
+  background-color: #ffffff;
+}
+
+.placeholder-text {
+  text-align: center;
+  margin-top: 150px;
+}
+
+.placeholder-text p {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 10px;
+}
