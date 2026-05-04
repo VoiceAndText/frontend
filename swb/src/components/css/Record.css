@@ -21,3 +21,24 @@
   
   overflow: hidden; 
 }
+
+@media (max-width: 768px) {
+  .record-block {
+    min-height: 350px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .record-block > div {
+    height: auto !important; 
+    padding-top: 0 !important; 
+  }
+
+  .record-block > div > div {
+    margin-bottom: 25px !important; 
+  }
+
+  .record-block canvas {
+    height: 80px !important; 
+  }
+}

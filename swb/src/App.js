@@ -8,6 +8,8 @@ import KakaoCallback from './components/front/KakaoCallback.js';
 import MyPage from './components/front/MyPage.js';
 import UploadPage from './components/front/UploadPage.js';
 import Dashboard from './components/front/Dashboard.js';
+import AdminLogs from './components/front/AdminLogs.js'
+import AdminUsers from './components/front/AdminUser.js'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,6 +35,8 @@ function App() {
           <Route path="/profile" element={<MyPage userInfo={userInfo} setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/adminlogs" element={<AdminLogs />} />
+          <Route path="/admin/adminusers" element={<AdminUsers />} />
         </Routes>
         <Footer />
       </div>

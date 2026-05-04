@@ -15,7 +15,7 @@ const MainSection = ({ isLoggedIn }) => {
 
   return (
     <main className="main-section">
-      
+      {/* 배경 오버레이 */}
       <div className="overlay"></div> 
       
       <div className="main-content">
@@ -26,8 +26,12 @@ const MainSection = ({ isLoggedIn }) => {
             텍스트 자막만으로 감정을 느껴보세요.
           </p>
           <div className="button-group">
-            <button className="btn-primary" onClick={handleKakaoLogin}>카카오 시작하기 →</button>
-            <button className="btn-secondary">비회원 이용</button>
+            <button className="btn-primary" onClick={handleKakaoLogin}>
+              카카오 시작하기 →
+            </button>
+            <button className="btn-secondary">
+              비회원 이용
+            </button>
           </div>
         </div>
       </div>
