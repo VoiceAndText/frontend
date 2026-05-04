@@ -24,9 +24,11 @@
 
 @media (max-width: 768px) {
   .record-block {
+    height: 350px !important;
     min-height: 350px !important;
+    margin-bottom: 30px !important;
     padding: 0 !important;
-    justify-content: center !important;
+    justify-content: center !important; 
   }
 
   .record-block > div {
