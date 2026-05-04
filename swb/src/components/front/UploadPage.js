@@ -74,7 +74,9 @@ const UploadPage = () => {
             <audio key={previewUrl} controls src={previewUrl} style={{ width: '100%', height: '40px' }} />
           </div>
         ) : (
-          <p style={{ color: '#999', fontSize: '14px' }}>1분 이내의 파일을 선택해 주세요.</p>
+          <p style={{ color: '#999', fontSize: '14px' }}>
+            {activeTab === 'upload' ? '1분 이내의 파일을 선택해 주세요.' : '1분 이내로 녹음해주세요.'}
+          </p>
         )}
       </div>
 
