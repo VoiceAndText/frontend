@@ -1,0 +1,185 @@
+.result-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 80px);
+  background-color: #fcfcfc;
+  padding: 40px 20px;
+}
+
+.result-page-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  gap: 30px;
+  height: calc(100vh - 200px); 
+  min-height: 550px; 
+}
+
+/* 좌측 음성 목록 */
+.result-left-panel {
+  flex: 1; 
+  border: 1px solid #4d4d4d;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  background-color: #ffffff;
+}
+
+.audio-list-container {
+  flex: 1;
+  overflow-y: auto; 
+  display: flex;
+  flex-direction: column;
+  gap: 20px; 
+  padding-right: 5px;
+  padding-bottom: 15px; 
+  margin-bottom: 20px;
+}
+
+.audio-list-container::-webkit-scrollbar {
+  width: 5px;
+}
+.audio-list-container::-webkit-scrollbar-thumb {
+  background-color: #d1d1d1;
+  border-radius: 10px;
+}
+
+.audio-card {
+  background-color: #a09db9; 
+  border-radius: 12px;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.35); 
+}
+
+.audio-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.audio-card.active {
+  background-color: #9896b5;
+  transform: translateY(2px);
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.audio-card-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.play-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #ffffff; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.play-icon-circle:active {
+  transform: scale(0.95);
+}
+
+.audio-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+
+.audio-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.audio-duration {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.audio-progress-section {
+  margin-top: 15px;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 2px;
+}
+
+.progress-bar-thumb {
+  width: 10px;
+  height: 10px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: -3px;
+  transform: translateX(-50%);
+}
+
+.progress-time {
+  display: flex;
+  justify-content: space-between;
+  color: #ffffff;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.left-action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.left-action-buttons button {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.left-action-buttons button:hover {
+  opacity: 0.8;
+}
+
+.btn-delete {
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  color: #333;
+}
+
+.btn-analyze {
+  background-color: #a09db9;
+  border: none;
+  color: #ffffff;
+}
+
+/* 우측 분석 결과 */
+.result-right-panel {
+  flex: 2; 
+  border: 1px solid #4d4d4d;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  background-color: #ffffff;
+}

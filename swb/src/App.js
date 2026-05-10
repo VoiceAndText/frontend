@@ -10,6 +10,7 @@ import UploadPage from './components/front/UploadPage.js';
 import Dashboard from './components/front/Dashboard.js';
 import AdminLogs from './components/front/AdminLogs.js'
 import AdminUsers from './components/front/AdminUser.js'
+import ResultPage from './components/front/ResultPage.js';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,6 +38,7 @@ function App() {
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/adminlogs" element={<AdminLogs />} />
           <Route path="/admin/adminusers" element={<AdminUsers />} />
+          <Route path="/results" element={<ResultPage />} />
         </Routes>
         <Footer />
       </div>
