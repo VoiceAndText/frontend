@@ -1,0 +1,37 @@
+/* 텍스트 뷰 전체 컨테이너 */
+.text-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* 줄 간격 */
+  width: 100%;
+}
+
+/* 개별 줄 레이아웃 */
+.transcript-line {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0; /* 각 줄 구분선 (선택사항) */
+  transition: background-color 0.2s;
+}
+
+.transcript-line:hover {
+  background-color: #f9f9f9; /* 마우스 올렸을 때 강조 */
+}
+
+/* 타임스탬프 스타일 */
+.transcript-time {
+  font-weight: 700;
+  color: #888;
+  min-width: 60px; /* 시간 영역 너비 고정 */
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace; /* 숫자 가독성 */
+}
+
+/* 본문 텍스트 스타일 */
+.transcript-text {
+  color: #333;
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-all; /* 긴 문장 자동 줄바꿈 */
+}
