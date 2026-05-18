@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TextView from './TextView';
 import AnalysisView from './AnalysisView';
-import '../css/MobileResultPage.css'; // 오직 모바일 전용 CSS만 바라봅니다.
+import '../css/MobileResultPage.css';
 
 const initialMockAudioList = [
   { id: 1, name: 'AUD-02122025.WAV', duration: '00:17:59' },
@@ -16,8 +16,6 @@ const MobileResultPage = () => {
   const [activeAudioId, setActiveAudioId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState('text');
-  
-  
   const [viewStep, setViewStep] = useState('list'); 
 
   const handleDelete = () => {
@@ -41,11 +39,8 @@ const MobileResultPage = () => {
 
   const handleCardClick = (id) => {
     setActiveAudioId(id);
-    
-    setViewStep('detail'); 
   };
 
-  
   if (viewStep === 'list') {
     return (
       <div className="m-page-wrapper">
@@ -75,7 +70,6 @@ const MobileResultPage = () => {
             ))}
           </div>
           
-          
           <div className="m-bottom-button-group">
             <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
             <button className="m-btn-action-analyze" onClick={() => {
@@ -88,7 +82,6 @@ const MobileResultPage = () => {
     );
   }
 
- 
   return (
     <div className="m-page-wrapper">
       <div className="m-detail-panel">
