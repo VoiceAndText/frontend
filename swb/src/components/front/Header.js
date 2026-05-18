@@ -7,6 +7,7 @@ import Logo from '../images/Logo.png';
 import HomeIcon from '../images/home.png'; 
 import LoginIcon from '../images/profile.png';
 import KakaoLoginBtnImg from '../images/kakao_login.png';
+import { fetchWithAuth } from './api';
 
 const Header = ({ isLoggedIn, setIsLoggedIn }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -28,12 +29,25 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('isLoggedIn');
-    sessionStorage.removeItem('userInfo');
-    setIsLoggedIn(false);
-    alert("로그아웃 되었습니다.");
-    navigate('/');
+  const handleLogout = async () => {
+    if (!window.confirm("로그아웃 하시겠습니까?")) return;
+
+    try {
+      await fetchWithAuth('/api/v1/auth/logout', {
+        method: 'POST',
+      });
+    } catch (error) {
+      console.error('로그아웃 API 통신 에러:', error);
+    } finally {
+      sessionStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('userInfo');
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+
+      setIsLoggedIn(false);
+      alert("로그아웃 되었습니다.");
+      navigate('/');
+    }
   };
 
   const handleKakaoLogin = () => {

@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import '../css/ResultPage.css';
+import React, { useState, useEffect } from 'react';
+import TextView from './TextView';
+import AnalysisView from './AnalysisView';
+import MobileResultPage from './MobileResultPage'; // 💡 모바일용 컴포넌트 임포트
+import '../css/ResultPage.css'; // PC용 오리지널 CSS
 
 const initialMockAudioList = [
   { id: 1, name: 'AUD-02122025.WAV', duration: '00:17:59' },
@@ -13,27 +16,40 @@ const ResultPage = () => {
   const [audioList, setAudioList] = useState(initialMockAudioList);
   const [activeAudioId, setActiveAudioId] = useState(3);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [activeTab, setActiveTab] = useState('text');
+
+  // 1. 모바일 화면 감지 로직
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  
+  if (isMobile) {
+    return <MobileResultPage />;
+  }
+
 
   const handleDelete = () => {
-    if (!activeAudioId) {
-      alert("삭제할 음성 파일을 먼저 선택해 주세요.");
-      return;
-    }
-    
-    if (window.confirm("선택한 음성 파일을 삭제하시겠습니까?")) {
-      setAudioList(prevList => prevList.filter(audio => audio.id !== activeAudioId));
-      setActiveAudioId(null); 
+    if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      setAudioList(prev => prev.filter(a => a.id !== activeAudioId));
+      setActiveAudioId(null);
       setIsPlaying(false);
     }
   };
 
-  const handlePlayToggle = (e, audioId) => {
+  const handlePlayToggle = (e, id) => {
     e.stopPropagation();
-    
-    if (activeAudioId === audioId) {
+    if (activeAudioId === id) {
       setIsPlaying(!isPlaying);
     } else {
-      setActiveAudioId(audioId);
+      setActiveAudioId(id);
       setIsPlaying(true);
     }
   };
@@ -42,6 +58,7 @@ const ResultPage = () => {
     <div className="result-page-wrapper">
       <div className="result-page-container">
         
+        {/* 좌측 패널: 오디오 리스트 */}
         <div className="result-left-panel">
           <div className="audio-list-container">
             {audioList.map((audio) => (
@@ -49,22 +66,18 @@ const ResultPage = () => {
                 key={audio.id} 
                 className={`audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
                 onClick={() => {
-                  if (activeAudioId !== audio.id) {
-                    setActiveAudioId(audio.id);
-                    setIsPlaying(true);
-                  }
+                  setActiveAudioId(audio.id);
+                  setIsPlaying(true);
                 }}
               >
                 <div className="audio-card-top">
-                  <div 
-                    className="play-icon-circle"
-                    onClick={(e) => handlePlayToggle(e, audio.id)}
-                  >
-                    {activeAudioId === audio.id && isPlaying ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#a09db9"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#a09db9"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    )}
+                  <div className="play-icon-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#a09db9">
+                      {activeAudioId === audio.id && isPlaying 
+                        ? <><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>
+                        : <polygon points="5 3 19 12 5 21 5 3"/>
+                      }
+                    </svg>
                   </div>
                   <div className="audio-info">
                     <span className="audio-name">{audio.name}</span>
@@ -85,11 +98,6 @@ const ResultPage = () => {
                 )}
               </div>
             ))}
-            {audioList.length === 0 && (
-              <p style={{ textAlign: 'center', color: '#999', marginTop: '50px' }}>
-                업로드된 음성 파일이 없습니다.
-              </p>
-            )}
           </div>
           <div className="left-action-buttons">
             <button className="btn-delete" onClick={handleDelete}>삭제하기</button>
@@ -97,8 +105,22 @@ const ResultPage = () => {
           </div>
         </div>
 
+        {/* 우측 패널 */}
         <div className="result-right-panel">
-          {/* 우측 분석 결과 */}
+          <div className="tab-header">
+            <button className={`tab-btn ${activeTab === 'text' ? 'active' : ''}`} onClick={() => setActiveTab('text')}>텍스트로 보기</button>
+            <button className={`tab-btn ${activeTab === 'analysis' ? 'active' : ''}`} onClick={() => setActiveTab('analysis')}>분석 결과</button>
+          </div>
+          
+          <div className="tab-content-area">
+            {activeAudioId ? (
+              activeTab === 'text' 
+                ? <TextView audioId={activeAudioId} /> 
+                : <AnalysisView audioId={activeAudioId} />
+            ) : (
+              <div className="empty-selection">파일을 선택하면 분석 결과가 나타납니다.</div>
+            )}
+          </div>
         </div>
 
       </div>

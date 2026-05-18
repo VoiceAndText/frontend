@@ -1,0 +1,77 @@
+
+.text-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; 
+  width: 100%;
+}
+
+
+.transcript-line {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0; 
+  transition: background-color 0.2s;
+}
+
+.transcript-line:hover {
+  background-color: #f9f9f9; 
+}
+
+
+.transcript-time {
+  font-weight: 700;
+  color: #888;
+  min-width: 60px; 
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace; 
+}
+
+
+.transcript-text {
+  color: #333;
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-all; 
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  
+  .text-view-container {
+    gap: 8px; 
+    width: 100%;
+  }
+
+  
+  .transcript-line {
+    padding: 6px 0; 
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  
+  .transcript-line:hover {
+    background-color: transparent; 
+  }
+
+ 
+  .transcript-time {
+    font-weight: 700;
+    color: #888;
+    min-width: 45px; 
+    max-width: 45px;
+    font-size: 12px; 
+  }
+
+  
+  .transcript-text {
+    color: #333;
+    font-size: 13px; 
+    line-height: 1.4; 
+    
+    
+    word-break: keep-all; 
+    overflow-wrap: break-word; 
+  }
+}
