@@ -1,4 +1,4 @@
-const BASE_URL = 'https://voiceandtext.duckdns.org/'; 
+const BASE_URL = 'https://voiceandtext.duckdns.org'; 
 
 export const fetchWithAuth = async (url, options = {}) => {
   let accessToken = sessionStorage.getItem('accessToken');
