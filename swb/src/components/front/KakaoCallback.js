@@ -21,22 +21,23 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           if (!res.ok) throw new Error('서버 응답 오류');
           return res.json();
         })
-        .then(data => {
+        .then(resBody => {
+          const serverData = resBody.data ? resBody.data : resBody;
+
           const userInfo = {
-            name: data.name || "사용자",
-            email: data.email || "",
-            // 프로필 이미지는 스웨거 응답 예시에 없으므로 기본 이미지 처리
+            name: serverData.name || "사용자",
+            email: serverData.email || "",
             profileImage: "https://via.placeholder.com/150" 
           };
 
           sessionStorage.setItem('isLoggedIn', 'true');
           sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
           
-          if (data.accessToken) {
-            sessionStorage.setItem('accessToken', data.accessToken);
+          if (serverData.accessToken) {
+            sessionStorage.setItem('accessToken', serverData.accessToken);
           }
-          if (data.refreshToken) {
-            sessionStorage.setItem('refreshToken', data.refreshToken);
+          if (serverData.refreshToken) {
+            sessionStorage.setItem('refreshToken', serverData.refreshToken);
           }
 
           setUserInfo(userInfo);
