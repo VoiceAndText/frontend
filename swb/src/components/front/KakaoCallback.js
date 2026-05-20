@@ -8,7 +8,7 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
     const code = new URL(window.location.href).searchParams.get("code");
     
     if (code) {
-      fetch('http://3.34.115.198:8080/api/v1/auth/kakao-login', {
+      fetch('https://voiceandtext.duckdns.org/api/v1/auth/kakao-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           navigate('/', { replace: true });
         })
         .catch(error => {
-          console.error('카카오 로그인 에러:', error);
+          console.error('테스트 배포 카카오 로그인 에러:', error);
           alert('로그인에 실패했습니다.');
           navigate('/'); 
         });
