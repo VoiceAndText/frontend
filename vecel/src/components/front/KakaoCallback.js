@@ -22,17 +22,13 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           return res.json();
         })
         .then(resBody => {
-          console.log('실제 데이터:', resBody);
-          
           const serverData = resBody.data ? resBody.data : resBody;
 
           const userInfo = {
-            name: serverData.name && serverData.name !== "." ? serverData.name : "사용자",
+            name: serverData.name || "사용자",
             email: serverData.email || "",
             profileImage: "https://via.placeholder.com/150" 
           };
-
-          console.log('userInfo:', userInfo);
 
           sessionStorage.setItem('isLoggedIn', 'true');
           sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
