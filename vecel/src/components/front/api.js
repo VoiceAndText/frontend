@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+const BASE_URL = 'http://3.34.115.198:8080'; 
 
 export const fetchWithAuth = async (url, options = {}) => {
   let accessToken = sessionStorage.getItem('accessToken');
