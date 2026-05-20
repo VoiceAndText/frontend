@@ -22,6 +22,8 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           return res.json();
         })
         .then(resBody => {
+          console.log('실제 데이터:', resBody);
+          
           const serverData = resBody.data ? resBody.data : resBody;
 
           const userInfo = {
