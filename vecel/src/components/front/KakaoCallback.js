@@ -8,7 +8,8 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
     const code = new URL(window.location.href).searchParams.get("code");
     
     if (code) {
-      fetch('http://3.34.115.198:8080/api/v1/auth/kakao-login', {
+      const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+      fetch(`${BASE_URL}/api/v1/auth/kakao-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
