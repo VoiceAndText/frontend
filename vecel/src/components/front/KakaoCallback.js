@@ -32,6 +32,8 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
             profileImage: "https://via.placeholder.com/150" 
           };
 
+          console.log('userInfo:', userInfo);
+
           sessionStorage.setItem('isLoggedIn', 'true');
           sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
           
