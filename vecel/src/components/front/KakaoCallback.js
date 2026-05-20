@@ -44,7 +44,7 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           navigate('/', { replace: true });
         })
         .catch(error => {
-          console.error('테스트 배포 카카오 로그인 에러:', error);
+          console.error('카카오 로그인 에러:', error);
           alert('로그인에 실패했습니다.');
           navigate('/'); 
         });
