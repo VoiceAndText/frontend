@@ -95,7 +95,7 @@ const UploadPage = () => {
 
       if (res.ok) {
         console.log('업로드 및 분석 성공:', resData.data);
-        alert('분석을 완료했습니다.');
+        alert('분석을 완료했습니다. 분석 결과를 조회합니다.');
         
         // 추후에 분석 결과 조회 api 개발 시 현재 분석한 파일 id 값 함께 넘겨주기: navigate(`/result?id=${resData.data.analysisRequestId}`);
         navigate(`/results`);
