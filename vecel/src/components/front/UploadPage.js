@@ -1,8 +1,10 @@
 import React, { useState, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/UploadPage.css';
 import Record from './Record.js'; 
 
 const UploadPage = () => {
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [audioDuration, setAudioDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -95,7 +97,9 @@ const UploadPage = () => {
         console.log('업로드 및 분석 성공:', resData.data);
         alert('분석을 완료했습니다.');
         
-        // 분석완료 후 분석결과 페이지로 이동 추가
+        // 추후에 현재 분석한 파일 id 값 함께 넘겨주기: navigate(`/result?id=${resData.data.analysisRequestId}`);
+        navigate(`/results`);
+        
       } else {
         console.error('업로드 실패:', resData);
         alert('분석에 실패했습니다.');
