@@ -97,9 +97,9 @@ const UploadPage = () => {
         console.log('업로드 및 분석 성공:', resData.data);
         alert('분석을 완료했습니다.');
         
-        // 추후에 현재 분석한 파일 id 값 함께 넘겨주기: navigate(`/result?id=${resData.data.analysisRequestId}`);
+        // 추후에 분석 결과 조회 api 개발 시 현재 분석한 파일 id 값 함께 넘겨주기: navigate(`/result?id=${resData.data.analysisRequestId}`);
         navigate(`/results`);
-        
+
       } else {
         console.error('업로드 실패:', resData);
         alert('분석에 실패했습니다.');
