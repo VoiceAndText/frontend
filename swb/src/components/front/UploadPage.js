@@ -8,6 +8,8 @@ const UploadPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const [activeTab, setActiveTab] = useState('upload');
+  const [fileSource, setFileSource] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const previewUrl = useMemo(() => {
     if (!selectedFile) return null;
@@ -36,6 +38,7 @@ const UploadPage = () => {
       } else {
         setSelectedFile(file);
         setAudioDuration(audio.duration);
+        setFileSource('UPLOAD');
       }
       window.URL.revokeObjectURL(url);
     };
@@ -44,12 +47,65 @@ const UploadPage = () => {
   const handleRecordComplete = (audioFile, duration) => {
     setSelectedFile(audioFile);
     setAudioDuration(duration);
+    setFileSource('RECORDING');
   };
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setAudioDuration(0);
+    setFileSource(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleFileUploadToServer = async () => {
+    if (!selectedFile || !fileSource) {
+      alert("파일을 먼저 선택하거나 녹음해 주세요.");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const sourceType = fileSource;
+      const duration = Math.ceil(audioDuration);
+
+      const baseUrl = 'https://voiceandtext.duckdns.org/api/v1/analysis/upload';
+      const url = new URL(baseUrl);
+      url.searchParams.append('sourceType', sourceType);
+      url.searchParams.append('durationSeconds', duration);
+
+      const formData = new FormData();
+      formData.append('audio', selectedFile);
+
+      const token = sessionStorage.getItem('accessToken');
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(url.toString(), {
+        method: 'POST',
+        headers: headers,
+        body: formData,
+      });
+
+      const resData = await res.json();
+
+      if (res.ok) {
+        console.log('업로드 및 분석 성공:', resData.data);
+        alert('분석을 완료했습니다.');
+        
+        // 분석완료 후 분석결과 페이지로 이동 추가
+      } else {
+        console.error('업로드 실패:', resData);
+        alert('분석에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('통신 에러:', error);
+      alert('서버와 연결할 수 없습니다.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const sharedActionArea = (
@@ -81,8 +137,14 @@ const UploadPage = () => {
       </div>
 
       <div className="bottom-action-buttons">
-        <button className="btn-cancel" onClick={handleRemoveFile}>취소</button>
-        <button className="btn-attach" onClick={() => alert("파일이 첨부되었습니다.")}>파일 첨부</button>
+        <button className="btn-cancel" onClick={handleRemoveFile} disabled={isUploading}>취소</button>
+        <button 
+          className="btn-attach" 
+          onClick={handleFileUploadToServer}
+          disabled={isUploading}
+        >
+          {isUploading ? '분석 중...' : '분석하기'}
+        </button>
       </div>
     </>
   );
