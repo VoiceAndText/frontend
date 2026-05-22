@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/UploadPage.css';
 import Record from './Record.js'; 
@@ -9,6 +9,7 @@ const UploadPage = () => {
   const [audioDuration, setAudioDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const intervalRef = useRef(null);
   const [activeTab, setActiveTab] = useState('upload');
   const [fileSource, setFileSource] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -17,6 +18,14 @@ const UploadPage = () => {
     if (!selectedFile) return null;
     return URL.createObjectURL(selectedFile);
   }, [selectedFile]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   const formatSize = (bytes) => {
     if (bytes === 0) return '0 MB';
@@ -53,16 +62,25 @@ const UploadPage = () => {
   };
 
   const handleRemoveFile = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     setSelectedFile(null);
     setAudioDuration(0);
     setFileSource(null);
+    setIsUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const startPollingAnalysis = (analysisRequestId, guestResultToken) => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
     const pollInterval = 3000;
     
-    const intervalId = setInterval(async () => {
+    intervalRef.current = setInterval(async () => {
       try {
         const activeToken = sessionStorage.getItem('accessToken');
         
@@ -83,8 +101,21 @@ const UploadPage = () => {
         if (res.ok) {
           const resultData = await res.json();
           
+          if (resultData.code === "UNAUTHORIZED" || resultData.message === "인증이 필요합니다.") {
+            return;
+          }
+
+          if (resultData.data && resultData.data.status === "FAILED") {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            setIsUploading(false);
+            alert(resultData.data.message || 'AI 서버 장애로 분석에 실패했습니다.');
+            return;
+          }
+
           if (resultData.success && resultData.data && resultData.data.result) { 
-            clearInterval(intervalId);
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
             setIsUploading(false);
             alert('분석이 완료되었습니다!');
             
@@ -94,13 +125,6 @@ const UploadPage = () => {
               navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`);
             }
           }
-        } else {
-          const errData = await res.json();
-          if (errData.code === "UNAUTHORIZED") {
-            clearInterval(intervalId);
-            setIsUploading(false);
-            alert("인증이 만료되었거나 권한이 없습니다. 다시 로그인 해주세요.");
-          }
         }
       } catch (error) {
         console.error(error);
@@ -108,8 +132,9 @@ const UploadPage = () => {
     }, pollInterval);
 
     setTimeout(() => {
-      clearInterval(intervalId);
-      if (isUploading) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
         setIsUploading(false);
         alert('분석 시간이 초과되었습니다. 나중에 결과 페이지에서 확인해 주세요.');
       }
@@ -120,6 +145,11 @@ const UploadPage = () => {
     if (!selectedFile || !fileSource) {
       alert("파일을 먼저 선택하거나 녹음해 주세요.");
       return;
+    }
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
 
     setIsUploading(true);
