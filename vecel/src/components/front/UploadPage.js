@@ -10,6 +10,7 @@ const UploadPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const intervalRef = useRef(null);
+  const timeoutRef = useRef(null);
   const [activeTab, setActiveTab] = useState('upload');
   const [fileSource, setFileSource] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -21,9 +22,8 @@ const UploadPage = () => {
 
   useEffect(() => {
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -66,6 +66,10 @@ const UploadPage = () => {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setSelectedFile(null);
     setAudioDuration(0);
     setFileSource(null);
@@ -74,10 +78,6 @@ const UploadPage = () => {
   };
 
   const startPollingAnalysis = (analysisRequestId, guestResultToken) => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
     const pollInterval = 3000;
     
     intervalRef.current = setInterval(async () => {
@@ -100,22 +100,13 @@ const UploadPage = () => {
 
         if (res.ok) {
           const resultData = await res.json();
-          
-          if (resultData.code === "UNAUTHORIZED" || resultData.message === "인증이 필요합니다.") {
-            return;
-          }
-
-          if (resultData.data && resultData.data.status === "FAILED") {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-            setIsUploading(false);
-            alert(resultData.data.message || 'AI 서버 장애로 분석에 실패했습니다.');
-            return;
-          }
 
           if (resultData.success && resultData.data && resultData.data.result) { 
-            clearInterval(intervalRef.current);
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
             intervalRef.current = null;
+            timeoutRef.current = null;
+            
             setIsUploading(false);
             alert('분석이 완료되었습니다!');
             
@@ -127,18 +118,18 @@ const UploadPage = () => {
           }
         }
       } catch (error) {
-        console.error(error);
+        console.error("Polling error:", error);
       }
     }, pollInterval);
 
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
-        setIsUploading(false);
-        alert('분석 시간이 초과되었습니다. 나중에 결과 페이지에서 확인해 주세요.');
       }
-    }, 120000);
+      setIsUploading(false);
+      alert('5분 분석 시간이 초과되었습니다. 나중에 마이페이지나 결과 조회 메뉴에서 확인해 주세요.');
+    }, 300000); 
   };
 
   const handleFileUploadToServer = async () => {
@@ -147,10 +138,8 @@ const UploadPage = () => {
       return;
     }
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     setIsUploading(true);
 
@@ -186,7 +175,7 @@ const UploadPage = () => {
         
         startPollingAnalysis(requestId, guestResultToken);
       } else {
-        alert('분석에 실패했습니다.');
+        alert('업로드 요청에 실패했습니다.');
         setIsUploading(false);
       }
     } catch (error) {
