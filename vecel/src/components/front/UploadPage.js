@@ -59,20 +59,22 @@ const UploadPage = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const startPollingAnalysis = (analysisRequestId, token, guestResultToken) => {
+  const startPollingAnalysis = (analysisRequestId, currentToken, guestResultToken) => {
     const pollInterval = 3000;
     
-    let pollUrl = token 
-      ? `https://voiceandtext.duckdns.org/api/v1/analysis/${analysisRequestId}`
-      : `https://voiceandtext.duckdns.org/api/v1/analysis/guest/${analysisRequestId}?token=${guestResultToken}`;
-
-    const headers = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const intervalId = setInterval(async () => {
       try {
+        const activeToken = currentToken || sessionStorage.getItem('accessToken');
+        
+        let pollUrl = activeToken 
+          ? `https://voiceandtext.duckdns.org/api/v1/analysis/${analysisRequestId}`
+          : `https://voiceandtext.duckdns.org/api/v1/analysis/guest/${analysisRequestId}?token=${guestResultToken}`;
+
+        const headers = {};
+        if (activeToken) {
+          headers['Authorization'] = `Bearer ${activeToken}`;
+        }
+
         const res = await fetch(pollUrl, {
           method: 'GET',
           headers: headers
@@ -86,11 +88,18 @@ const UploadPage = () => {
             setIsUploading(false);
             alert('분석이 완료되었습니다!');
             
-            if (token) {
+            if (activeToken) {
               navigate(`/results?id=${analysisRequestId}`);
             } else {
               navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`);
             }
+          }
+        } else {
+          const errData = await res.json();
+          if (errData.code === "UNAUTHORIZED") {
+            clearInterval(intervalId);
+            setIsUploading(false);
+            alert("인증이 만료되었거나 권한이 없습니다. 다시 로그인 해주세요.");
           }
         }
       } catch (error) {
