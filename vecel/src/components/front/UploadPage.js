@@ -59,12 +59,12 @@ const UploadPage = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const startPollingAnalysis = (analysisRequestId, currentToken, guestResultToken) => {
+  const startPollingAnalysis = (analysisRequestId, guestResultToken) => {
     const pollInterval = 3000;
     
     const intervalId = setInterval(async () => {
       try {
-        const activeToken = currentToken || sessionStorage.getItem('accessToken');
+        const activeToken = sessionStorage.getItem('accessToken');
         
         let pollUrl = activeToken 
           ? `https://voiceandtext.duckdns.org/api/v1/analysis/${analysisRequestId}`
@@ -154,7 +154,7 @@ const UploadPage = () => {
         const requestId = resData.data.analysisRequestId;
         const guestResultToken = resData.data.guestResultToken;
         
-        startPollingAnalysis(requestId, token, guestResultToken);
+        startPollingAnalysis(requestId, guestResultToken);
       } else {
         alert('분석에 실패했습니다.');
         setIsUploading(false);
