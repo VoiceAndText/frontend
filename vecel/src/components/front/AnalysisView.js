@@ -28,19 +28,23 @@ const AnalysisView = ({ audioId, analysisResult }) => {
         </div>
       </div>
 
-      {/* 페이지 상태에 따라 렌더링 분기 */}
-      {isSummaryPage ? (
-        <SummaryChartView 
-          pts={timeSeriesAnalysis} 
-          primaryEmotion={primaryEmotion} 
-          dissonanceIndex={dissonanceIndex} 
-        />
-      ) : (
-        <SentenceDetailView 
-          currentData={timeSeriesAnalysis[currentIndex]} 
-          index={currentIndex} 
-        />
-      )}
+      <div className="analysis-scroll-area">
+        
+        {/* 페이지 상태에 따라 렌더링 분기 */}
+        {isSummaryPage ? (
+          <SummaryChartView 
+            pts={timeSeriesAnalysis} 
+            primaryEmotion={primaryEmotion} 
+            dissonanceIndex={dissonanceIndex} 
+          />
+        ) : (
+          <SentenceDetailView 
+            currentData={timeSeriesAnalysis[currentIndex]} 
+            index={currentIndex} 
+          />
+        )}
+        
+      </div>
     </div>
   );
 };
