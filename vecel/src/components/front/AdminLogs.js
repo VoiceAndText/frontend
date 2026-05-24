@@ -18,16 +18,30 @@ const AdminLogs = () => {
 
   const fetchLogs = async (pageNumber) => {
     try {
-      // 도메인 중복을 방지하기 위해 앞부분을 제거하고 경로만 전달합니다.
-      const res = await fetchWithAuth(`/api/v1/admin/logs?page=${pageNumber}&size=${size}&sort=createdAt,desc`, {
+      // 1. 기존 api.js 함수를 그대로 호출 (다른 파일에 영향 0%)
+      const response = await fetchWithAuth(`/api/v1/admin/logs?page=${pageNumber}&size=${size}&sort=createdAt,desc`, {
         method: 'GET'
       });
 
-      const serverData = res.data ? res.data : res;
+      // 2. 응답 데이터를 안전하게 JSON으로 파싱
+      const resBody = await response.json();
 
-      if (serverData && serverData.content) {
-        setLogs(serverData.content);
-        setTotalPages(serverData.totalPages || 0);
+      // 3. 백엔드가 200 OK 안에 "UNAUTHORIZED"를 숨겨 보냈는지 체크
+      if (resBody && resBody.code === "UNAUTHORIZED") {
+        console.error("인증 실패 사유:", resBody.message);
+        alert("관리자 인증 정보가 올바르지 않습니다. 다시 로그인해 주세요.");
+        sessionStorage.clear();
+        window.location.href = '/';
+        return;
+      }
+
+      // 4. 정상 데이터 매핑
+      if (resBody && resBody.success) {
+        const serverData = resBody.data;
+        if (serverData && serverData.content) {
+          setLogs(serverData.content);
+          setTotalPages(serverData.totalPages || 0);
+        }
       }
     } catch (error) {
       console.error('로그 내역 조회 실패:', error);
