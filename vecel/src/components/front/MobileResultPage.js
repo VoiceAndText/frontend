@@ -11,12 +11,11 @@ const initialMockAudioList = [
   { id: 5, name: 'AUD-02122025.WAV', duration: '00:17:59' },
 ];
 
-const MobileResultPage = () => {
-  const [audioList, setAudioList] = useState(initialMockAudioList);
-  const [activeAudioId, setActiveAudioId] = useState(null);
+const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult }) => {
+  const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeTab, setActiveTab] = useState('text');
-  const [viewStep, setViewStep] = useState('list'); 
+  const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
+  const [viewStep, setViewStep] = useState(uploadedId ? 'detail' : 'list');
 
   const handleDelete = () => {
     if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
@@ -24,6 +23,7 @@ const MobileResultPage = () => {
       setAudioList(prev => prev.filter(a => a.id !== activeAudioId));
       setActiveAudioId(null);
       setIsPlaying(false);
+      setViewStep('list');
     }
   };
 
@@ -99,7 +99,7 @@ const MobileResultPage = () => {
         <div className="m-tab-view-content">
           {activeTab === 'text' 
             ? <TextView audioId={activeAudioId} /> 
-            : <AnalysisView audioId={activeAudioId} />
+            : <AnalysisView audioId={activeAudioId} analysisResult={analysisResult} />
           }
         </div>
       </div>

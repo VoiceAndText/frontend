@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import TextView from './TextView';
 import AnalysisView from './AnalysisView';
 import MobileResultPage from './MobileResultPage'; // 💡 모바일용 컴포넌트 임포트
@@ -13,10 +14,14 @@ const initialMockAudioList = [
 ];
 
 const ResultPage = () => {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const uploadedId = searchParams.get('id'); // 주소창의 ?id=번호 읽기
+  const analysisResult = location.state?.analysisResult || null; // UploadPage에서 보낸 진짜 데이터
   const [audioList, setAudioList] = useState(initialMockAudioList);
-  const [activeAudioId, setActiveAudioId] = useState(3);
+  const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : 3);
+  const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   const [isPlaying, setIsPlaying] = useState(true);
-  const [activeTab, setActiveTab] = useState('text');
 
   // 1. 모바일 화면 감지 로직
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -31,7 +36,14 @@ const ResultPage = () => {
 
   
   if (isMobile) {
-    return <MobileResultPage />;
+    return (
+      <MobileResultPage 
+        uploadedId={uploadedId} 
+        audioList={audioList} 
+        setAudioList={setAudioList} 
+        analysisResult={analysisResult} 
+      />
+    );
   }
 
 
@@ -116,7 +128,7 @@ const ResultPage = () => {
             {activeAudioId ? (
               activeTab === 'text' 
                 ? <TextView audioId={activeAudioId} /> 
-                : <AnalysisView audioId={activeAudioId} />
+                : <AnalysisView audioId={activeAudioId} analysisResult={analysisResult} />
             ) : (
               <div className="empty-selection">파일을 선택하면 분석 결과가 나타납니다.</div>
             )}

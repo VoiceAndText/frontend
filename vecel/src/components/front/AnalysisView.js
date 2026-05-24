@@ -17,9 +17,9 @@ const sentenceAnalysisData = {
   ]
 };
 
-const AnalysisView = ({ audioId }) => {
+const AnalysisView = ({ audioId, analysisResult }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const dataList = sentenceAnalysisData[audioId] || [];
+  const dataList = analysisResult || sentenceAnalysisData[audioId] || [];
   const currentData = dataList[currentIndex];
 
   if (!currentData) return <div className="empty-msg">분석 데이터가 없습니다.</div>;
