@@ -1,113 +1,131 @@
-import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import '../css/Dashboard.css';
-
-// 차트에 들어갈 가짜(Mock) 데이터
-const data = [
-  { name: '1', value: 20 }, { name: '2', value: 30 }, { name: '3', value: 50 },
-  { name: '4', value: 30 }, { name: '5', value: 55 }, { name: '6', value: 85 },
-  { name: '7', value: 35 }, { name: '8', value: 50 }, { name: '9', value: 45 },
-  { name: '10', value: 60 }, { name: '11', value: 25 }, { name: '12', value: 40 }
-];
+import React, { useState, useEffect } from 'react';
+import { fetchWithAuth } from './api';
 
 const Dashboard = () => {
+  const [users, setUsers] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const disasterRecoveryFetch = async () => {
+      try {
+        const [usersRes, logsRes] = await Promise.all([
+          fetchWithAuth('/api/v1/admin/users?page=0&size=500', { method: 'GET' }),
+          fetchWithAuth('/api/v1/admin/logs?page=0&size=500&sort=createdAt,desc', { method: 'GET' })
+        ]);
+
+        const usersData = await usersRes.json();
+        const logsData = await logsRes.json();
+
+        if (usersData && usersData.success && usersData.data?.content) {
+          setUsers(usersData.data.content);
+        }
+        if (logsData && logsData.success && logsData.data?.content) {
+          setLogs(logsData.data.content);
+        }
+      } catch (error) {
+        console.error('대시보드 종합 지표 연동 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    disasterRecoveryFetch();
+  }, []);
+
+  const metrics = React.useMemo(() => {
+    const totalUsers = users.length;
+    const suspendedUsers = users.filter(u => u.status === 'SUSPENDED').length;
+    const totalRequests = logs.length;
+    
+    const failedLogs = logs.filter(l => l.status === 'FAILED' || l.errorMessage);
+    const errorRate = totalRequests > 0 ? ((failedLogs.length / totalRequests) * 100).toFixed(1) : 0;
+
+    const sourceCounts = logs.reduce((acc, log) => {
+      if (log.sourceType) acc[log.sourceType] = (acc[log.sourceType] || 0) + 1;
+      return acc;
+    }, {});
+
+    return {
+      totalUsers,
+      suspendedUsers,
+      totalRequests,
+      errorRate,
+      sourceCounts,
+      recentErrors: failedLogs.slice(0, 5)
+    };
+  }, [users, logs]);
+
+  if (loading) {
+    return <div style={{ padding: '20px', color: '#fff' }}>Loading Admin Dashboard Metrics...</div>;
+  }
+
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard-container">
-        <h2 className="dashboard-title">Dashboard</h2>
-        
-        {/* 상단 요약 카드 섹션 */}
-        <div className="summary-cards">
-          {/* Card 1: Total User */}
-          <div className="card">
-            <div className="card-top">
-              <div className="card-info">
-                <span className="card-label">Total User</span>
-                <h3 className="card-number">40,689</h3>
-              </div>
-              <div className="card-icon" style={{ backgroundColor: '#EBEBFF', fill: '#8080FF' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-              </div>
-            </div>
-            <div className="card-bottom">
-              <span className="trend up">↗ 8.5%</span> <span className="trend-text">Up from yesterday</span>
-            </div>
-          </div>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', color: '#fff' }}>
+      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>Admin Dashboard</h2>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+        <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568' }}>
+          <div style={{ fontSize: '14px', color: '#a0aec0', marginBottom: '5px' }}>Total Active Accounts</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{metrics.totalUsers}명</div>
+        </div>
+        <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568' }}>
+          <div style={{ fontSize: '14px', color: '#a0aec0', marginBottom: '5px' }}>Suspended Accounts</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#e53e3e' }}>{metrics.suspendedUsers}명</div>
+        </div>
+        <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568' }}>
+          <div style={{ fontSize: '14px', color: '#a0aec0', marginBottom: '5px' }}>Accumulated Analysis</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#4299e1' }}>{metrics.totalRequests}건</div>
+        </div>
+        <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568' }}>
+          <div style={{ fontSize: '14px', color: '#a0aec0', marginBottom: '5px' }}>System Error Rate</div>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', color: metrics.errorRate > 10 ? '#e53e3e' : '#48bb78' }}>{metrics.errorRate}%</div>
+        </div>
+      </div>
 
-          {/* Card 2: New User */}
-          <div className="card">
-            <div className="card-top">
-              <div className="card-info">
-                <span className="card-label">New User</span>
-                <h3 className="card-number">10,293</h3>
-              </div>
-              <div className="card-icon" style={{ backgroundColor: '#FFF4E5', fill: '#FFB84D' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-              </div>
-            </div>
-            <div className="card-bottom">
-              <span className="trend up">↗ 1.3%</span> <span className="trend-text">Up from past week</span>
-            </div>
-          </div>
-
-          {/* Card 3: Inactive User */}
-          <div className="card">
-            <div className="card-top">
-              <div className="card-info">
-                <span className="card-label">Inactive User</span>
-                <h3 className="card-number">2,040</h3>
-              </div>
-              <div className="card-icon" style={{ backgroundColor: '#FFEBEB', fill: '#FF8080' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-              </div>
-            </div>
-            <div className="card-bottom">
-              <span className="trend up">↗ 1.8%</span> <span className="trend-text">Up from yesterday</span>
-            </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+        <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568', minHeight: '300px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' }}>Analysis Source Proportion</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '25px' }}>
+            {Object.entries(metrics.sourceCounts).map(([source, count]) => {
+              const percentage = metrics.totalRequests > 0 ? ((count / metrics.totalRequests) * 100).toFixed(1) : 0;
+              return (
+                <div key={source}>
+                  <div style={{ display: 'flex', justifyContent: 'between', marginBottom: '5px', fontSize: '14px' }}>
+                    <span>{source}</span>
+                    <span style={{ marginLeft: 'auto', color: '#a0aec0' }}>{count}건 ({percentage}%)</span>
+                  </div>
+                  <div style={{ background: '#4a5568', height: '12px', borderRadius: '6px', overflow: 'hidden' }}>
+                    <div style={{ background: '#3182ce', width: `${percentage}%`, height: '100%', borderRadius: '6px' }}></div>
+                  </div>
+                </div>
+              );
+            })}
+            {Object.keys(metrics.sourceCounts).length === 0 && (
+              <div style={{ textAlign: 'center', color: '#a0aec0', paddingTop: '40px' }}>No analysis record data found.</div>
+            )}
           </div>
         </div>
 
-        {/* 하단 차트 섹션 */}
-        <div className="chart-section">
-          <div className="chart-header">
-            <h3>Account Details</h3>
-            <select className="chart-filter">
-              <option value="new">NEW</option>
-              <option value="all">ALL</option>
-            </select>
-          </div>
-          
-          <div className="chart-body">
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={data} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
-                <defs>
-                  {/* 차트 아래쪽 그라데이션 색상 정의 */}
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4A90E2" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#4A90E2" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#aaa' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#aaa' }} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                  labelStyle={{ display: 'none' }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#4A90E2" 
-                  strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorValue)" 
-                  activeDot={{ r: 6, fill: "#4A90E2", stroke: "#fff", strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+        <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568', minHeight: '300px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px', color: '#f56565' }}>Critical System Failures</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {metrics.recentErrors.map((err) => (
+              <div key={err.analysisRequestId} style={{ background: '#1a202c', padding: '12px', borderRadius: '6px', borderLeft: '4px solid #e53e3e', fontSize: '13px' }}>
+                <div style={{ display: 'flex', justifyContent: 'between', color: '#a0aec0', marginBottom: '4px' }}>
+                  <span>Req #{err.analysisRequestId} (User ID: {err.userId})</span>
+                  <span style={{ marginLeft: 'auto' }}>{err.createdAt ? new Date(err.createdAt).toLocaleTimeString() : ''}</span>
+                </div>
+                <div style={{ color: '#fc8181', fontWeight: '500' }}>{err.errorMessage || 'Unknown Fatal Error'}</div>
+              </div>
+            ))}
+            {metrics.recentErrors.length === 0 && (
+              <div style={{ textAlign: 'center', color: '#48bb78', paddingTop: '50px', fontWeight: 'bold' }}>System Healthy. No errors detected.</div>
+            )}
           </div>
         </div>
       </div>
+
     </div>
   );
 };
