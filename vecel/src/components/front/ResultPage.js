@@ -222,44 +222,52 @@ const ResultPage = () => {
 
         <div className="result-left-panel">
           <div className="audio-list-container">
-            {audioList.map((audio) => (
-              <div 
-                key={audio.id} 
-                className={`audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
-                onClick={() => handleCardClick(audio.id)}
-              >
-                <div className="audio-card-top">
-                  <div className="play-icon-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#a09db9">
-                      {activeAudioId === audio.id && isPlaying 
-                        ? <><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>
-                        : <polygon points="5 3 19 12 5 21 5 3"/>
-                      }
-                    </svg>
+            {/* ✨ 여기가 수정된 핵심 부분입니다 */}
+            {audioList.length > 0 ? (
+              audioList.map((audio) => (
+                <div 
+                  key={audio.id} 
+                  className={`audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
+                  onClick={() => handleCardClick(audio.id)}
+                >
+                  <div className="audio-card-top">
+                    <div className="play-icon-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#a09db9">
+                        {activeAudioId === audio.id && isPlaying 
+                          ? <><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>
+                          : <polygon points="5 3 19 12 5 21 5 3"/>
+                        }
+                      </svg>
+                    </div>
+                    <div className="audio-info">
+                      <span className="audio-name">{audio.name}</span>
+                      <span className="audio-duration">{audio.duration}</span>
+                    </div>
                   </div>
-                  <div className="audio-info">
-                    <span className="audio-name">{audio.name}</span>
-                    <span className="audio-duration">{audio.duration}</span>
-                  </div>
+                  
+                  {activeAudioId === audio.id && (
+                    <div className="audio-progress-section">
+                      <div className="progress-bar-bg" onClick={handleProgressClick} style={{ cursor: 'pointer' }}>
+                        <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
+                        <div className="progress-bar-thumb" style={{ left: `${progressPercent}%` }}></div>
+                      </div>
+                      <div className="progress-time">
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                
-                {activeAudioId === audio.id && (
-                  <div className="audio-progress-section">
-                    <div className="progress-bar-bg" onClick={handleProgressClick} style={{ cursor: 'pointer' }}>
-                      <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
-                      <div className="progress-bar-thumb" style={{ left: `${progressPercent}%` }}></div>
-                    </div>
-                    <div className="progress-time">
-                      <span>{formatTime(currentTime)}</span>
-                      <span>{formatTime(duration)}</span>
-                    </div>
-                  </div>
-                )}
+              ))
+            ) : (
+              /* ✨ 파일이 없을 때 보여줄 안내 문구 */
+              <div className="empty-list-notice">
+                <p>음성 파일을 업로드해주세요.</p>
               </div>
-            ))}
+            )}
           </div>
           
-          {/* ✨ PC 회원: 분석하기 버튼 삭제, 삭제하기 버튼만 표시 / 비회원: 아예 안 보임 */}
+          {/* PC 회원: 분석하기 버튼 삭제, 삭제하기 버튼만 표시 / 비회원: 아예 안 보임 */}
           {isLoggedIn && (
             <div className="left-action-buttons">
               <button className="btn-delete" onClick={handleDelete}>삭제하기</button>
