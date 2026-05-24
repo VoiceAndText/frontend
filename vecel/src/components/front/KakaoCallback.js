@@ -22,14 +22,30 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo, setIsAdmin }) => {
           return res.json();
         })
         .then(resBody => {
-          // [체크] 서버가 보내주는 실제 유저 정보 데이터 구조를 브라우저 콘솔에 출력합니다.
-          console.log("=== 백엔드 서버 로그인 응답 데이터 전체 ===");
-          console.log(resBody);
-
           const serverData = resBody.data ? resBody.data : resBody;
           
-          // 콘솔창에 찍힌 내용을 보고 아래 매칭 기준을 서버 필드명에 맞게 수정해야 합니다.
-          const checkAdmin = serverData.role === 'ADMIN' || serverData.isAdmin === true;
+          let checkAdmin = false;
+
+          if (serverData.accessToken) {
+            try {
+              const base64Url = serverData.accessToken.split('.')[1];
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join(''));
+
+              const tokenData = JSON.parse(jsonPayload);
+
+              checkAdmin = tokenData.role === 'ADMIN' || 
+                           tokenData.auth === 'ADMIN' || 
+                           tokenData.isAdmin === true ||
+                           serverData.userId === 3 || 
+                           tokenData.sub === "3";
+            } catch (e) {
+              console.error("토큰 디코딩 실패:", e);
+              if (serverData.userId === 3) checkAdmin = true;
+            }
+          }
 
           const userInfo = {
             userId: serverData.userId || null,
