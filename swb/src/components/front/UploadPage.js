@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/UploadPage.css';
 import Record from './Record.js'; 
@@ -9,6 +9,8 @@ const UploadPage = () => {
   const [audioDuration, setAudioDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const intervalRef = useRef(null);
+  const timeoutRef = useRef(null);
   const [activeTab, setActiveTab] = useState('upload');
   const [fileSource, setFileSource] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -17,6 +19,13 @@ const UploadPage = () => {
     if (!selectedFile) return null;
     return URL.createObjectURL(selectedFile);
   }, [selectedFile]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const formatSize = (bytes) => {
     if (bytes === 0) return '0 MB';
@@ -53,10 +62,88 @@ const UploadPage = () => {
   };
 
   const handleRemoveFile = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setSelectedFile(null);
     setAudioDuration(0);
     setFileSource(null);
+    setIsUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const startPollingAnalysis = (analysisRequestId, guestResultToken) => {
+    const pollInterval = 3000;
+    
+    intervalRef.current = setInterval(async () => {
+      try {
+        const activeToken = sessionStorage.getItem('accessToken');
+        
+        let pollUrl = activeToken 
+          ? `https://voiceandtext.duckdns.org/api/v1/analysis/${analysisRequestId}`
+          : `https://voiceandtext.duckdns.org/api/v1/analysis/guest/${analysisRequestId}?token=${guestResultToken}`;
+
+        const headers = {};
+        if (activeToken) {
+          headers['Authorization'] = `Bearer ${activeToken}`;
+        }
+
+        const res = await fetch(pollUrl, {
+          method: 'GET',
+          headers: headers
+        });
+
+        if (res.ok) {
+          const resultData = await res.json();
+
+          if (resultData.success && resultData.data && resultData.data.result) { 
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            intervalRef.current = null;
+            timeoutRef.current = null;
+            
+            setIsUploading(false);
+            alert('분석이 완료되었습니다!');
+            
+            if (activeToken) {
+              navigate(`/results?id=${analysisRequestId}`, {
+                state: {
+                  analysisResult: resultData.data.result,
+                  audioUrl: previewUrl,
+                  fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
+                  fileDuration: audioDuration
+                }
+              });
+            } else {
+              navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`, {
+                state: {
+                  analysisResult: resultData.data.result,
+                  audioUrl: previewUrl,
+                  fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
+                  fileDuration: audioDuration
+                }
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+      }
+    }, pollInterval);
+
+    timeoutRef.current = setTimeout(() => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      setIsUploading(false);
+      alert('5분 분석 시간이 초과되었습니다. 나중에 마이페이지나 결과 조회 메뉴에서 확인해 주세요.');
+    }, 300000); 
   };
 
   const handleFileUploadToServer = async () => {
@@ -64,6 +151,9 @@ const UploadPage = () => {
       alert("파일을 먼저 선택하거나 녹음해 주세요.");
       return;
     }
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     setIsUploading(true);
 
@@ -94,20 +184,17 @@ const UploadPage = () => {
       const resData = await res.json();
 
       if (res.ok) {
-        console.log('업로드 및 분석 성공:', resData.data);
-        alert('분석을 완료했습니다. 분석 결과를 조회합니다.');
+        const requestId = resData.data.analysisRequestId;
+        const guestResultToken = resData.data.guestResultToken;
         
-        // 추후에 분석 결과 조회 api 개발 시 현재 분석한 파일 id 값 함께 넘겨주기: navigate(`/result?id=${resData.data.analysisRequestId}`);
-        navigate(`/results`);
-
+        startPollingAnalysis(requestId, guestResultToken);
       } else {
-        console.error('업로드 실패:', resData);
-        alert('분석에 실패했습니다.');
+        alert('업로드 요청에 실패했습니다.');
+        setIsUploading(false);
       }
     } catch (error) {
-      console.error('통신 에러:', error);
+      console.error(error);
       alert('서버와 연결할 수 없습니다.');
-    } finally {
       setIsUploading(false);
     }
   };
@@ -141,20 +228,25 @@ const UploadPage = () => {
       </div>
 
       <div className="bottom-action-buttons">
-        <button className="btn-cancel" onClick={handleRemoveFile} disabled={isUploading}>취소</button>
-        <button 
-          className="btn-attach" 
-          onClick={handleFileUploadToServer}
-          disabled={isUploading}
-        >
-          {isUploading ? '분석 중...' : '분석하기'}
-        </button>
+        <button className="btn-cancel" onClick={handleRemoveFile}>취소</button>
+        <button className="btn-attach" onClick={handleFileUploadToServer}>분석하기</button>
       </div>
     </>
   );
 
   return (
     <div className="upload-page-wrapper">
+      
+      {isUploading && (
+        <div className="global-overlay">
+          <div className="popup-box">
+            <div className="spinner"></div>
+            <h3>분석 중...</h3>
+            <p>AI가 음성을 분석하고 있습니다.<br/>잠시만 기다려주세요.</p>
+          </div>
+        </div>
+      )}
+
       <div className="upload-page-container">
         <div className="mobile-tab-buttons">
           <button 
@@ -172,7 +264,6 @@ const UploadPage = () => {
         </div>
 
         <div className="content-areas">
-          
           <div className={`upload-left-block ${activeTab === 'upload' ? 'show-mobile' : 'hide-mobile'}`}>
             <div 
               className={`dropzone-area ${isDragging ? 'dragging' : ''}`}
@@ -199,7 +290,6 @@ const UploadPage = () => {
               {sharedActionArea}
             </div>
           </div>
-
         </div>
       </div>
     </div>

@@ -179,7 +179,7 @@ const Record = ({ onRecordComplete }) => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%', paddingTop: '40px' }}>
           <div style={{ marginBottom: '60px', textAlign: 'center' }}>
             <p style={{ fontWeight: 'bold', color: '#ffffff', fontSize: '15px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-              1번에 분석 가능한 녹음은 최대 1분입니다.
+              한 번에 분석 가능한 녹음은 최대 1분입니다.
             </p>
           </div>
           

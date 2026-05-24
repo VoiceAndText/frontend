@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
+const KakaoCallback = ({ setIsLoggedIn, setUserInfo, setIsAdmin }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,14 +23,40 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
         })
         .then(resBody => {
           const serverData = resBody.data ? resBody.data : resBody;
+          
+          let checkAdmin = false;
+
+          if (serverData.accessToken) {
+            try {
+              const base64Url = serverData.accessToken.split('.')[1];
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join(''));
+
+              const tokenData = JSON.parse(jsonPayload);
+
+              checkAdmin = tokenData.role === 'ADMIN' || 
+                           tokenData.auth === 'ADMIN' || 
+                           tokenData.isAdmin === true ||
+                           serverData.userId === 3 || 
+                           tokenData.sub === "3";
+            } catch (e) {
+              console.error("토큰 디코딩 실패:", e);
+              if (serverData.userId === 3) checkAdmin = true;
+            }
+          }
 
           const userInfo = {
+            userId: serverData.userId || null,
             name: serverData.name || "사용자",
             email: serverData.email || "",
-            profileImage: "https://via.placeholder.com/150" 
+            profileImage: "https://via.placeholder.com/150",
+            isAdmin: checkAdmin
           };
 
           sessionStorage.setItem('isLoggedIn', 'true');
+          sessionStorage.setItem('isAdmin', checkAdmin ? 'true' : 'false');
           sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
           
           if (serverData.accessToken) {
@@ -42,7 +68,13 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
 
           setUserInfo(userInfo);
           setIsLoggedIn(true);
-          navigate('/', { replace: true });
+          if (setIsAdmin) setIsAdmin(checkAdmin);
+
+          if (checkAdmin) {
+            navigate('/admin/dashboard', { replace: true });
+          } else {
+            navigate('/', { replace: true });
+          }
         })
         .catch(error => {
           console.error('카카오 로그인 에러:', error);
@@ -50,7 +82,7 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           navigate('/'); 
         });
     }
-  }, [setIsLoggedIn, setUserInfo, navigate]);
+  }, [setIsLoggedIn, setUserInfo, setIsAdmin, navigate]);
 
   return null;
 };

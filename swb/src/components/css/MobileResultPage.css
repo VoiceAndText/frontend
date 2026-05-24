@@ -196,3 +196,12 @@
   padding: 12px 10px;
   border-radius: 8px;
 }
+
+.m-empty-list-notice { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  height: 100%; color: #888; 
+  font-size: 14px; 
+  text-align: center; 
+}
