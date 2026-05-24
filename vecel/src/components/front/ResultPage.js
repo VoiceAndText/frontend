@@ -27,6 +27,19 @@ const ResultPage = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
+    // 결과 페이지에 진입하면 무조건 뜨는 기본 확인 로그
+    console.log("🚀 [ResultPage] 업데이트 적용 완료! 결과 화면에 정상 진입했습니다.");
+
+    // 만약 업로드 페이지에서 분석이 완료되어 넘어온 경우라면 데이터 분실 여부까지 검사
+    if (uploadedId) {
+      console.log("🔥 [디버깅] 업로드 후 자동 이동 확인됨!");
+      console.log("🆔 주소창에서 읽어온 분석 ID (uploadedId):", uploadedId);
+      console.log("📦 보따리에서 꺼낸 진짜 분석 결과 (analysisResult):", analysisResult);
+      console.log("🎵 함께 넘어온 음성 파일 URL (audioUrl):", location.state?.audioUrl);
+    }
+  }, [uploadedId, analysisResult, location.state]);
+
+  useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
