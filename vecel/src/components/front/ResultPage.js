@@ -23,7 +23,7 @@ const ResultPage = () => {
 
   useEffect(() => {
     // 결과 페이지에 진입하면 무조건 뜨는 기본 확인 로그
-    console.log("🚀 [ResultPage] 업데이트 ver.4 적용 완료! 결과 화면에 정상 진입했습니다.");
+    console.log("🚀 [ResultPage] 업데이트 ver.6 적용 완료! 결과 화면에 정상 진입했습니다.");
 
     // 만약 업로드 페이지에서 분석이 완료되어 넘어온 경우라면 데이터 분실 여부까지 검사
     if (uploadedId) {
@@ -199,7 +199,7 @@ const ResultPage = () => {
           <div className="tab-content-area">
             {activeAudioId ? (
               activeTab === 'text' 
-                ? <TextView audioId={activeAudioId} /> 
+                ? <TextView audioId={activeAudioId} analysisResult={analysisResult} /> 
                 : <AnalysisView audioId={activeAudioId} analysisResult={analysisResult} />
             ) : (
               <div className="empty-selection">파일을 선택하면 분석 결과가 나타납니다.</div>

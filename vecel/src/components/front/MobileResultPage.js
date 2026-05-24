@@ -90,7 +90,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
         
         <div className="m-tab-view-content">
           {activeTab === 'text' 
-            ? <TextView audioId={activeAudioId} /> 
+            ? <TextView audioId={activeAudioId} analysisResult={analysisResult} /> 
             : <AnalysisView audioId={activeAudioId} analysisResult={analysisResult} />
           }
         </div>
