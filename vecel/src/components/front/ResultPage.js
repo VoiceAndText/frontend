@@ -20,7 +20,7 @@ const ResultPage = () => {
 
   useEffect(() => {
     // 결과 페이지에 진입하면 무조건 뜨는 기본 확인 로그
-    console.log("🚀 [ResultPage] 업데이트 ver.1 적용 완료! 결과 화면에 정상 진입했습니다.");
+    console.log("🚀 [ResultPage] 업데이트 ver.2 적용 완료! 결과 화면에 정상 진입했습니다.");
 
     // 만약 업로드 페이지에서 분석이 완료되어 넘어온 경우라면 데이터 분실 여부까지 검사
     if (uploadedId) {
@@ -30,6 +30,28 @@ const ResultPage = () => {
       console.log("🎵 함께 넘어온 음성 파일 URL (audioUrl):", location.state?.audioUrl);
     }
   }, [uploadedId, analysisResult, location.state]);
+
+  useEffect(() => {
+    // 주소창에 방금 업로드한 id가 있고, 보따리에 음성 파일 URL이 들어있다면?
+    if (uploadedId && location.state?.audioUrl) {
+      setAudioList(prevList => {
+        // 이미 리스트에 이 파일이 있는지 검사 (중복 추가 방지)
+        const isExist = prevList.find(audio => audio.id === Number(uploadedId));
+        
+        if (!isExist) {
+          // 리스트에 없으면 새로운 가상의 오디오 객체를 만들어서 맨 앞에 끼워 넣음!
+          const newAudio = {
+            id: Number(uploadedId),
+            name: '방금 분석한 음성 파일', // 나중에 UploadPage에서 진짜 이름을 넘겨받아도 됩니다.
+            duration: '방금 전',
+            audioUrl: location.state.audioUrl // 이 주소로 나중에 재생 기능을 연결합니다.
+          };
+          return [newAudio, ...prevList];
+        }
+        return prevList;
+      });
+    }
+  }, [uploadedId, location.state]);
 
   useEffect(() => {
     const handleResize = () => {
