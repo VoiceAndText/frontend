@@ -116,7 +116,7 @@ const UploadPage = () => {
                   analysisResult: resultData.data.result, // 백엔드가 준 진짜 결과
                   audioUrl: previewUrl,                    // 프론트가 들고 있던 음성 파일
                   fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
-                  fileDuration: totalDurationSeconds
+                  fileDuration: audioDuration
                 }
               });
             } else {
@@ -125,7 +125,7 @@ const UploadPage = () => {
                   analysisResult: resultData.data.result,
                   audioUrl: previewUrl,
                   fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
-                  fileDuration: totalDurationSeconds
+                  fileDuration: audioDuration
                 }
               });
             }
