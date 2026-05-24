@@ -49,8 +49,10 @@ const ResultPage = () => {
         if (!isExist) {
           return [{
             id: Number(uploadedId),
-            name: '방금 분석한 음성 파일',
-            duration: '방금 전',
+            name: location.state?.fileName || '업로드한 음성 파일',
+            duration: location.state?.fileDuration 
+            ? formatTime(location.state.fileDuration) 
+            : '00:00',
             audioUrl: location.state.audioUrl 
           }, ...prevList];
         }

@@ -114,14 +114,18 @@ const UploadPage = () => {
               navigate(`/results?id=${analysisRequestId}`, {
                 state: {
                   analysisResult: resultData.data.result, // 백엔드가 준 진짜 결과
-                  audioUrl: previewUrl                    // 프론트가 들고 있던 음성 파일
+                  audioUrl: previewUrl,                    // 프론트가 들고 있던 음성 파일
+                  fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
+                  fileDuration: totalDurationSeconds
                 }
               });
             } else {
               navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`, {
                 state: {
                   analysisResult: resultData.data.result,
-                  audioUrl: previewUrl
+                  audioUrl: previewUrl,
+                  fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
+                  fileDuration: totalDurationSeconds
                 }
               });
             }
