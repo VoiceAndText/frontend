@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/MobileSidebar.css';
 
-
 import ProfileIcon from '../images/user.png'; 
 import UploadIcon from '../images/upload.png';
 import ResultIcon from '../images/research.png';
@@ -12,11 +11,9 @@ import LogIcon from '../images/admin_log.png';
 import UserIcon from '../images/admin_user.png';
 import KakaoIcon from '../images/kakao_login.png';
 
-const Sidebar = ({ isOpen, onClose, isLoggedIn, onLogout, onLogin }) => {
-  const [isAdminMode, setIsAdminMode] = useState(false);
+const MobileSidebar = ({ isOpen, onClose, isLoggedIn, isAdmin, onLogout, onLogin }) => {
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     if (!isOpen) {
@@ -24,7 +21,6 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn, onLogout, onLogin }) => {
     }
   }, [isOpen]);
 
-  // 로그아웃 핸들러
   const handleLogoutClick = () => {
     if (onLogout) onLogout();
     onClose();
@@ -39,7 +35,7 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn, onLogout, onLogin }) => {
         <div className="mobile-sidebar-header">
           <div className="user-profile">
             <img src={ProfileIcon} alt="Profile" className="profile-icon-img" />
-            <span>{isLoggedIn ? '회원 MENU' : '비회원 MENU'}</span>
+            <span>{isLoggedIn ? (isAdmin ? '관리자 MENU' : '회원 MENU') : '비회원 MENU'}</span>
           </div>
         </div>
         
@@ -67,7 +63,7 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn, onLogout, onLogin }) => {
               <Link to="/results" onClick={onClose}>분석 결과 확인</Link>
             </li>
 
-            {isLoggedIn && isAdminMode && (
+            {isLoggedIn && isAdmin && (
               <li className={`admin-menu-li ${isAdminMenuOpen ? 'active' : ''}`}>
                 <div className="menu-item-wrapper" onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}>
                   <div className="menu-item-main">
@@ -98,22 +94,9 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn, onLogout, onLogin }) => {
 
         <div className="mobile-sidebar-footer">
           {isLoggedIn && (
-            <>
-              <div className="admin-mode-toggle">
-                <span>관리자 모드</span>
-                <label className="switch">
-                  <input 
-                    type="checkbox" 
-                    checked={isAdminMode} 
-                    onChange={() => setIsAdminMode(!isAdminMode)} 
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-              <button className="logout-btn" onClick={handleLogoutClick}>
-                로그아웃
-              </button>
-            </>
+            <button className="logout-btn" onClick={handleLogoutClick}>
+              로그아웃
+            </button>
           )}
           <p className="copyright">Copyright © 2026 V&T</p>
         </div>
@@ -122,4 +105,4 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn, onLogout, onLogin }) => {
   );
 };
 
-export default Sidebar;
+export default MobileSidebar;
