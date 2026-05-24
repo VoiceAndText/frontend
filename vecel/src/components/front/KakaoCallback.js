@@ -1,7 +1,8 @@
+// KakaoCallback.jsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
+const KakaoCallback = ({ setIsLoggedIn, setUserInfo, setIsAdmin }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,14 +24,18 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
         })
         .then(resBody => {
           const serverData = resBody.data ? resBody.data : resBody;
+          const checkAdmin = serverData.role === 'ADMIN' || serverData.isAdmin === true;
 
           const userInfo = {
+            userId: serverData.userId || null,
             name: serverData.name || "사용자",
             email: serverData.email || "",
-            profileImage: "https://via.placeholder.com/150" 
+            profileImage: "https://via.placeholder.com/150",
+            isAdmin: checkAdmin
           };
 
           sessionStorage.setItem('isLoggedIn', 'true');
+          sessionStorage.setItem('isAdmin', checkAdmin ? 'true' : 'false');
           sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
           
           if (serverData.accessToken) {
@@ -42,7 +47,13 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
 
           setUserInfo(userInfo);
           setIsLoggedIn(true);
-          navigate('/', { replace: true });
+          if (setIsAdmin) setIsAdmin(checkAdmin);
+
+          if (checkAdmin) {
+            navigate('/admin', { replace: true });
+          } else {
+            navigate('/', { replace: true });
+          }
         })
         .catch(error => {
           console.error('카카오 로그인 에러:', error);
@@ -50,7 +61,7 @@ const KakaoCallback = ({ setIsLoggedIn, setUserInfo }) => {
           navigate('/'); 
         });
     }
-  }, [setIsLoggedIn, setUserInfo, navigate]);
+  }, [setIsLoggedIn, setUserInfo, setIsAdmin, navigate]);
 
   return null;
 };
