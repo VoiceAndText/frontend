@@ -111,9 +111,19 @@ const UploadPage = () => {
             alert('분석이 완료되었습니다!');
             
             if (activeToken) {
-              navigate(`/results?id=${analysisRequestId}`);
+              navigate(`/results?id=${analysisRequestId}`, {
+                state: {
+                  analysisResult: resultData.data.result, // 백엔드가 준 진짜 결과
+                  audioUrl: previewUrl                    // 프론트가 들고 있던 음성 파일
+                }
+              });
             } else {
-              navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`);
+              navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`, {
+                state: {
+                  analysisResult: resultData.data.result,
+                  audioUrl: previewUrl
+                }
+              });
             }
           }
         }
