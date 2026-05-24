@@ -37,7 +37,7 @@ const Sidebar = ({ isOpen, onClose, isLoggedIn, isAdmin }) => {
               <li>
                 <img src={ProfileIcon} alt="Profile" className="menu-icon-img" />
                 <Link to="/profile" onClick={onClose}>내 프로필</Link>
-              </td>
+              </li>
             )}
             <li>
               <img src={UploadIcon} alt="Upload" className="menu-icon-img" />
