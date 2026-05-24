@@ -2,39 +2,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import TextView from './TextView';
 import AnalysisView from './AnalysisView';
-import MobileResultPage from './MobileResultPage'; // 💡 모바일용 컴포넌트 임포트
-import '../css/ResultPage.css'; // PC용 오리지널 CSS
+import MobileResultPage from './MobileResultPage';
+import '../css/ResultPage.css';
 
 const ResultPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const uploadedId = searchParams.get('id'); // 주소창의 ?id=번호 읽기
-  const analysisResult = location.state?.analysisResult || null; // UploadPage에서 보낸 진짜 데이터
+  const uploadedId = searchParams.get('id');
+  
+  // 💡 1. analysisResult를 상수가 아닌 상태(State)로 변경합니다. (다른 파일 클릭 시 갱신을 위해)
+  const [analysisResult, setAnalysisResult] = useState(location.state?.analysisResult || null);
+  
   const [audioList, setAudioList] = useState([]);
   const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
-  const audioRef = useRef(null); // 실제 <audio> 태그를 조종할 리모컨
-  const [isPlaying, setIsPlaying] = useState(false); // 초기 상태는 일시정지
-  const [currentTime, setCurrentTime] = useState(0); // 현재 재생 시간 (초)
-  const [duration, setDuration] = useState(0); // 전체 오디오 길이 (초)
+  
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-  // 1. 모바일 화면 감지 로직
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  useEffect(() => {
-    // 결과 페이지에 진입하면 무조건 뜨는 기본 확인 로그
-    console.log("🚀 [ResultPage] 업데이트 ver.7 적용 완료! 결과 화면에 정상 진입했습니다.");
-
-    // 만약 업로드 페이지에서 분석이 완료되어 넘어온 경우라면 데이터 분실 여부까지 검사
-    if (uploadedId) {
-      console.log("🔥 [디버깅] 업로드 후 자동 이동 확인됨!");
-      console.log("🆔 주소창에서 읽어온 분석 ID (uploadedId):", uploadedId);
-      console.log("📦 보따리에서 꺼낸 진짜 분석 결과 (analysisResult):", analysisResult);
-      console.log("🎵 함께 넘어온 음성 파일 URL (audioUrl):", location.state?.audioUrl);
-    }
-  }, [uploadedId, analysisResult, location.state]);
-
-  // ✨ 누락되었던 마법의 시간 변환 함수!
   const formatTime = (time) => {
     if (!time || isNaN(time)) return '00:00';
     const m = Math.floor(time / 60).toString().padStart(2, '0');
@@ -42,7 +31,6 @@ const ResultPage = () => {
     return `${m}:${s}`;
   };
 
-  // ✨ 누락되었던 진행 바 건너뛰기 함수!
   const handleProgressClick = (e) => {
     if (!audioRef.current || !duration) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -53,6 +41,7 @@ const ResultPage = () => {
     setCurrentTime(newTime);
   };
 
+  // 방금 업로드한 파일 처리
   useEffect(() => {
     if (uploadedId && location.state?.audioUrl) {
       setAudioList(prevList => {
@@ -70,37 +59,31 @@ const ResultPage = () => {
     }
   }, [uploadedId, location.state]);
 
+  // 회원일 경우 서버에서 내 파일 목록 불러오기
   useEffect(() => {
     const fetchMyAudioList = async () => {
-      // 1. 지갑(sessionStorage)에서 로그인 신분증 꺼내기
       const token = sessionStorage.getItem('accessToken');
-      if (!token) return; // 비회원이면 조용히 종료 (아무것도 안 함)
+      if (!token) return; 
 
       try {
-        // 2. 백엔드에 내 파일 목록 1페이지(최대 20개) 요청하기
         const res = await fetch('https://voiceandtext.duckdns.org/api/v1/files?page=0&size=20', {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}` // "나 로그인한 회원이야!" 증명
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (res.ok) {
           const resData = await res.json();
-          
-          // 3. 백엔드가 준 데이터를 우리 프론트엔드 리스트 모양에 맞게 변환
           const fetchedFiles = resData.data.content.map(file => ({
             id: file.analysisRequestId,
             name: file.originalFileName,
-            duration: formatTime(file.durationSeconds), // 💡 만들어둔 마법의 함수 재사용!
-            audioUrl: null // ⚠️ 이전 파일들은 아직 15분짜리 재생 링크가 없으므로 비워둡니다.
+            duration: formatTime(file.durationSeconds),
+            audioUrl: null // 초기엔 재생 링크가 없음
           }));
 
-          // 4. 기존 리스트(방금 올린 파일)와 겹치지 않게 안전하게 합치기
           setAudioList(prevList => {
             const prevIds = prevList.map(a => a.id);
             const newFiles = fetchedFiles.filter(f => !prevIds.includes(f.id));
-            return [...prevList, ...newFiles]; // 최신 파일이 위로 오도록 배열 합치기
+            return [...prevList, ...newFiles];
           });
         }
       } catch (error) {
@@ -109,27 +92,74 @@ const ResultPage = () => {
     };
 
     fetchMyAudioList();
-  }, []); // 빈 배열([])을 넣어서 페이지가 처음 켜질 때 딱 한 번만 실행!
+  }, []);
 
+  // ✨ 2. 리스트를 클릭했을 때 해당 파일의 '재생 링크'와 '분석 결과'를 가져오는 핵심 함수!
+  const handleCardClick = async (id) => {
+    if (activeAudioId === id) return; // 이미 선택된 파일이면 무시
+
+    setActiveAudioId(id);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setAnalysisResult(null); // 로딩 중 빈 화면을 위해 초기화
+
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) return;
+
+    try {
+      // [API 1] 재생 링크(presigned-url) 발급받기
+      const urlRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${id}/presigned-url`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (urlRes.ok) {
+        const urlData = await urlRes.json();
+        // audioList 업데이트 (해당 파일에 발급받은 URL 쏙 집어넣기)
+        setAudioList(prev => prev.map(audio => 
+          audio.id === id ? { ...audio, audioUrl: urlData.data.presignedUrl } : audio
+        ));
+      }
+
+      // [API 2] 분석 결과 알맹이 가져오기
+      const analysisRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/analysis/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (analysisRes.ok) {
+        const analysisData = await analysisRes.json();
+        setAnalysisResult(analysisData.data.result); // 우측 뷰에 데이터 뿌려주기!
+      }
+    } catch (error) {
+      console.error("상세 정보 불러오기 에러:", error);
+    }
+  };
+
+  // ✨ 3. 재생 버튼 클릭 시 로직 연동
+  const handlePlayToggle = async (e, id) => {
+    e.stopPropagation();
+    if (activeAudioId === id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      await handleCardClick(id); // 데이터 먼저 가져오고
+      setIsPlaying(true);        // 재생 시작
+    }
+  };
+
+  // 오디오 재생 동기화
   useEffect(() => {
     if (audioRef.current) {
-      if (isPlaying) {
+      if (isPlaying && audioRef.current.src) {
         audioRef.current.play().catch(e => console.log("재생 대기:", e));
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, activeAudioId]);
+  }, [isPlaying, activeAudioId, audioList]); // audioList가 갱신되어 src가 생겼을 때도 감지
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  
   if (isMobile) {
     return (
       <MobileResultPage 
@@ -141,7 +171,6 @@ const ResultPage = () => {
     );
   }
 
-
   const handleDelete = () => {
     if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
     if (window.confirm("정말 삭제하시겠습니까?")) {
@@ -151,48 +180,30 @@ const ResultPage = () => {
     }
   };
 
-  const handlePlayToggle = (e, id) => {
-    e.stopPropagation();
-    if (activeAudioId === id) {
-      setIsPlaying(!isPlaying);
-    } else {
-      setActiveAudioId(id);
-      setIsPlaying(true);
-      setCurrentTime(0);
-    }
-  };
-
-  // 현재 선택된 오디오 객체 찾기
   const activeAudio = audioList.find(a => a.id === activeAudioId);
-  // 진행률 퍼센트 계산
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="result-page-wrapper">
       <div className="result-page-container">
         
-        {/* ✨ 화면에 보이지 않는 진짜 오디오 플레이어 ✨ */}
         {activeAudio && activeAudio.audioUrl && (
           <audio
             ref={audioRef}
             src={activeAudio.audioUrl}
-            onTimeUpdate={() => setCurrentTime(audioRef.current.currentTime)} // 1초마다 현재 시간 업데이트
-            onLoadedMetadata={() => setDuration(audioRef.current.duration)}   // 오디오 길이를 알아냈을 때 업데이트
-            onEnded={() => { setIsPlaying(false); setCurrentTime(0); }}       // 노래가 끝나면 정지
+            onTimeUpdate={() => setCurrentTime(audioRef.current.currentTime)}
+            onLoadedMetadata={() => setDuration(audioRef.current.duration)}
+            onEnded={() => { setIsPlaying(false); setCurrentTime(0); }}
           />
         )}
 
-        {/* 좌측 패널: 오디오 리스트 */}
         <div className="result-left-panel">
           <div className="audio-list-container">
             {audioList.map((audio) => (
               <div 
                 key={audio.id} 
                 className={`audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveAudioId(audio.id);
-                  setIsPlaying(true);
-                }}
+                onClick={() => handleCardClick(audio.id)} // 💡 클릭 시 데이터 가져오는 함수 연결
               >
                 <div className="audio-card-top">
                   <div className="play-icon-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
@@ -208,7 +219,7 @@ const ResultPage = () => {
                     <span className="audio-duration">{audio.duration}</span>
                   </div>
                 </div>
-                {/* 💡 5. 가짜 데이터 대신 실제 계산된 진행률(progressPercent)과 시간(formatTime) 적용 */}
+                
                 {activeAudioId === audio.id && (
                   <div className="audio-progress-section">
                     <div className="progress-bar-bg" onClick={handleProgressClick} style={{ cursor: 'pointer' }}>
@@ -230,7 +241,6 @@ const ResultPage = () => {
           </div>
         </div>
 
-        {/* 우측 패널 */}
         <div className="result-right-panel">
           <div className="tab-header">
             <button className={`tab-btn ${activeTab === 'text' ? 'active' : ''}`} onClick={() => setActiveTab('text')}>텍스트로 보기</button>
