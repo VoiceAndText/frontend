@@ -7,7 +7,7 @@ import MobileSidebar from './MobileSidebar';
 import Logo from '../images/Logo.png';
 import HomeIcon from '../images/home.png'; 
 import LoginIcon from '../images/profile.png';
-import AdminIcon from '../images/admin_icon.png';
+import AdminIcon from '../images/profile.png';
 import KakaoLoginBtnImg from '../images/kakao_login.png';
 import { fetchWithAuth } from './api';
 
