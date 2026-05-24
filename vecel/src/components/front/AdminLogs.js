@@ -18,7 +18,8 @@ const AdminLogs = () => {
 
   const fetchLogs = async (pageNumber) => {
     try {
-      const res = await fetchWithAuth(`https://voiceandtext.duckdns.org/api/v1/admin/logs?page=${pageNumber}&size=${size}&sort=createdAt,desc`, {
+      // 도메인 중복을 방지하기 위해 앞부분을 제거하고 경로만 전달합니다.
+      const res = await fetchWithAuth(`/api/v1/admin/logs?page=${pageNumber}&size=${size}&sort=createdAt,desc`, {
         method: 'GET'
       });
 
