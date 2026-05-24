@@ -107,14 +107,14 @@ const UploadPage = () => {
             intervalRef.current = null;
             timeoutRef.current = null;
             
-            setIsUploading(false);
-            alert('분석이 완료되었습니다!');
+            setIsUploading(false); // 가리개 해제
+            alert('분석이 완료되었습니다!'); // 💡 기존 알림창 방식 그대로 유지!
             
             if (activeToken) {
               navigate(`/results?id=${analysisRequestId}`, {
                 state: {
-                  analysisResult: resultData.data.result, // 백엔드가 준 진짜 결과
-                  audioUrl: previewUrl,                    // 프론트가 들고 있던 음성 파일
+                  analysisResult: resultData.data.result,
+                  audioUrl: previewUrl,
                   fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
                   fileDuration: audioDuration
                 }
@@ -155,7 +155,7 @@ const UploadPage = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    setIsUploading(true);
+    setIsUploading(true); // 💡 업로드 시작 시 전체 화면 가리개 활성화
 
     try {
       const sourceType = fileSource;
@@ -214,7 +214,7 @@ const UploadPage = () => {
                   <span style={{ fontSize: '12px', color: '#999' }}>{formatSize(selectedFile.size)} • {formatTime(audioDuration)}</span>
                 </div>
               </div>
-              <button onClick={handleRemoveFile} style={{ background: 'none', border: 'none', cursor: 'pointer' }} disabled={isUploading}>
+              <button onClick={handleRemoveFile} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               </button>
             </div>
@@ -228,33 +228,37 @@ const UploadPage = () => {
       </div>
 
       <div className="bottom-action-buttons">
-        <button className="btn-cancel" onClick={handleRemoveFile} disabled={isUploading}>취소</button>
-        <button 
-          className="btn-attach" 
-          onClick={handleFileUploadToServer}
-          disabled={isUploading}
-        >
-          {isUploading ? '분석 중...' : '분석하기'}
-        </button>
+        <button className="btn-cancel" onClick={handleRemoveFile}>취소</button>
+        <button className="btn-attach" onClick={handleFileUploadToServer}>분석하기</button>
       </div>
     </>
   );
 
   return (
     <div className="upload-page-wrapper">
+      
+      {/* ✨ 전체화면 클릭 방지 가리개 (로딩 팝업) 추가 */}
+      {isUploading && (
+        <div className="global-overlay">
+          <div className="popup-box">
+            <div className="spinner"></div>
+            <h3>분석 중...</h3>
+            <p>AI가 음성을 분석하고 있습니다.<br/>잠시만 기다려주세요.</p>
+          </div>
+        </div>
+      )}
+
       <div className="upload-page-container">
         <div className="mobile-tab-buttons">
           <button 
             className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
-            onClick={() => !isUploading ? setActiveTab('upload') : null}
-            disabled={isUploading}
+            onClick={() => setActiveTab('upload')}
           >
             파일 업로드
           </button>
           <button 
             className={`tab-btn ${activeTab === 'record' ? 'active' : ''}`}
-            onClick={() => !isUploading ? setActiveTab('record') : null}
-            disabled={isUploading}
+            onClick={() => setActiveTab('record')}
           >
             녹음하기
           </button>
@@ -264,24 +268,24 @@ const UploadPage = () => {
           <div className={`upload-left-block ${activeTab === 'upload' ? 'show-mobile' : 'hide-mobile'}`}>
             <div 
               className={`dropzone-area ${isDragging ? 'dragging' : ''}`}
-              onDragOver={(e) => { e.preventDefault(); if(!isUploading) setIsDragging(true); }}
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
-              onDrop={(e) => { e.preventDefault(); setIsDragging(false); if(!isUploading) processFile(e.dataTransfer.files[0]); }}
+              onDrop={(e) => { e.preventDefault(); setIsDragging(false); processFile(e.dataTransfer.files[0]); }}
             >
               <div className="dropzone-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path><path d="M12 15v-6"></path><path d="M9 12l3-3 3 3"></path></svg>
               </div>
               <h2 className="dropzone-title">파일을 선택하거나 여기에 드래그 앤 드롭하세요.</h2>
               <p className="dropzone-subtitle">음성 파일만 가능하며, 최대 1분입니다.</p>
-              <button className="browse-btn" onClick={() => fileInputRef.current.click()} disabled={isUploading}>파일 찾아보기</button>
-              <input type="file" style={{ display: 'none' }} ref={fileInputRef} onChange={(e) => processFile(e.target.files[0])} accept="audio/*" disabled={isUploading} />
+              <button className="browse-btn" onClick={() => fileInputRef.current.click()}>파일 찾아보기</button>
+              <input type="file" style={{ display: 'none' }} ref={fileInputRef} onChange={(e) => processFile(e.target.files[0])} accept="audio/*" />
             </div>
 
             {sharedActionArea}
           </div>
 
           <div className={`record-right-block ${activeTab === 'record' ? 'show-mobile' : 'hide-mobile'}`}>
-            <Record onRecordComplete={handleRecordComplete} aria-disabled={isUploading} />
+            <Record onRecordComplete={handleRecordComplete} />
             
             <div className="mobile-record-shared">
               {sharedActionArea}

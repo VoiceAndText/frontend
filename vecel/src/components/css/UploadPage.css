@@ -288,3 +288,53 @@
     padding-top: 0;
   }
 }
+
+.global-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.55); /* 화면을 덮는 반투명한 회색빛 */
+  z-index: 9999; /* 화면 최상단에 띄워 모든 클릭을 차단 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-box {
+  background: white;
+  padding: 40px 50px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.popup-box h3 {
+  margin: 0;
+  color: #333;
+  font-size: 22px;
+}
+
+.popup-box p {
+  margin: 10px 0 0 0;
+  color: #777;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* 빙글빙글 돌아가는 로딩 스피너 */
+.spinner {
+  width: 45px;
+  height: 45px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #a09db9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
