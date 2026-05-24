@@ -5,7 +5,6 @@ import '../css/MobileResultPage.css';
 
 const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult }) => {
   const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   const [viewStep, setViewStep] = useState(uploadedId ? 'detail' : 'list');
 

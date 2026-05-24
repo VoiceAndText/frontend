@@ -17,10 +17,6 @@ const ResultPage = () => {
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   
   const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // 💡 로그인 여부 확인 변수
