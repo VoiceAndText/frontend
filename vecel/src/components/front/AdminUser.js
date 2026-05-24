@@ -199,7 +199,11 @@ const AdminUsers = () => {
               ) : userLogs.length > 0 ? (
                 userLogs.map((log) => {
                   const config = LOG_TYPE_CONFIG[log.status] || LOG_TYPE_CONFIG.Default;
-                  const logTime = log.createdAt ? new Date(log.createdAt).toLocaleTimeString() : '00:00:00';
+                  
+                  const logTime = log.createdAt ? (() => {
+                    const utcDate = log.createdAt.endsWith('Z') ? log.createdAt : `${log.createdAt}Z`;
+                    return new Date(utcDate).toLocaleTimeString('ko-KR');
+                  })() : '00:00:00';
                   
                   return (
                     <div key={log.analysisRequestId} className="terminal-line">
