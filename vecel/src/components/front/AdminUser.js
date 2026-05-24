@@ -50,13 +50,14 @@ const AdminUsers = () => {
         setUsers(userList);
         
         if (userList.length > 0) {
-          if (!selectedUser) {
-            setSelectedUser(userList[0]);
-            fetchUserLogs(userList[0].userId);
-          } else {
-            const updatedCurrent = userList.find(u => u.userId === selectedUser.userId);
-            if (updatedCurrent) setSelectedUser(updatedCurrent);
-          }
+          setSelectedUser(prevSelected => {
+            if (!prevSelected) {
+              fetchUserLogs(userList[0].userId);
+              return userList[0];
+            }
+            const updatedCurrent = userList.find(u => u.userId === prevSelected.userId);
+            return updatedCurrent || prevSelected;
+          });
         }
       }
     } catch (error) {
@@ -64,7 +65,7 @@ const AdminUsers = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedUser, fetchUserLogs]);
+  }, [fetchUserLogs]);
 
   useEffect(() => {
     fetchUsers();
