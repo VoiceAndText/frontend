@@ -64,28 +64,35 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
       <div className="m-page-wrapper">
         <div className="m-list-panel">
           <div className="m-audio-list-scroll">
-            {audioList.map((audio) => (
-              <div 
-                key={audio.id} 
-                className={`m-audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
-                onClick={() => handleCardClick(audio.id)}
-              >
-                <div className="m-audio-card-top">
-                  <div className="m-play-btn-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#a09db9">
-                      {activeAudioId === audio.id && isPlaying 
-                        ? <><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>
-                        : <polygon points="5 3 19 12 5 21 5 3"/>
-                      }
-                    </svg>
-                  </div>
-                  <div className="m-audio-info-texts">
-                    <span className="m-audio-name-title">{audio.name}</span>
-                    <span className="m-audio-duration-time">{audio.duration}</span>
+            {audioList.length > 0 ? (
+              audioList.map((audio) => (
+                <div 
+                  key={audio.id} 
+                  className={`m-audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
+                  onClick={() => handleCardClick(audio.id)}
+                >
+                  <div className="m-audio-card-top">
+                    <div className="m-play-btn-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#a09db9">
+                        {activeAudioId === audio.id && isPlaying 
+                          ? <><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>
+                          : <polygon points="5 3 19 12 5 21 5 3"/>
+                        }
+                      </svg>
+                    </div>
+                    <div className="m-audio-info-texts">
+                      <span className="m-audio-name-title">{audio.name}</span>
+                      <span className="m-audio-duration-time">{audio.duration}</span>
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              /* ✨ 데이터가 없을 때 표시할 안내 문구 */
+              <div className="m-empty-list-notice">
+                <p>음성 파일을 업로드해주세요.</p>
               </div>
-            ))}
+            )}
           </div>
           
           {/* ✨ 모바일 회원 전용: 삭제하기 버튼 유지, 분석하기 -> 결과보기 텍스트 변경 */}
