@@ -18,15 +18,12 @@ const AdminLogs = () => {
 
   const fetchLogs = async (pageNumber) => {
     try {
-      // 1. 기존 api.js 함수를 그대로 호출 (다른 파일에 영향 0%)
       const response = await fetchWithAuth(`/api/v1/admin/logs?page=${pageNumber}&size=${size}&sort=createdAt,desc`, {
         method: 'GET'
       });
 
-      // 2. 응답 데이터를 안전하게 JSON으로 파싱
       const resBody = await response.json();
 
-      // 3. 백엔드가 200 OK 안에 "UNAUTHORIZED"를 숨겨 보냈는지 체크
       if (resBody && resBody.code === "UNAUTHORIZED") {
         console.error("인증 실패 사유:", resBody.message);
         alert("관리자 인증 정보가 올바르지 않습니다. 다시 로그인해 주세요.");
@@ -35,7 +32,6 @@ const AdminLogs = () => {
         return;
       }
 
-      // 4. 정상 데이터 매핑
       if (resBody && resBody.success) {
         const serverData = resBody.data;
         if (serverData && serverData.content) {
@@ -80,7 +76,11 @@ const AdminLogs = () => {
             <div className="log-content">
               {logs.map((log) => {
                 const config = LOG_TYPE_CONFIG[log.status] || LOG_TYPE_CONFIG.Default;
-                const dateText = log.createdAt ? new Date(log.createdAt).toLocaleString() : 'UNKNOWN TIME';
+                
+                const dateText = log.createdAt ? (() => {
+                  const utcDate = log.createdAt.endsWith('Z') ? log.createdAt : `${log.createdAt}Z`;
+                  return new Date(utcDate).toLocaleString('ko-KR');
+                })() : 'UNKNOWN TIME';
                 
                 return (
                   <div key={log.analysisRequestId} className="log-line">
