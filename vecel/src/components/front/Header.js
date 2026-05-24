@@ -1,3 +1,4 @@
+// Header.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Header.css';
@@ -6,10 +7,11 @@ import MobileSidebar from './MobileSidebar';
 import Logo from '../images/Logo.png';
 import HomeIcon from '../images/home.png'; 
 import LoginIcon from '../images/profile.png';
+import AdminIcon from '../images/admin_icon.png';
 import KakaoLoginBtnImg from '../images/kakao_login.png';
 import { fetchWithAuth } from './api';
 
-const Header = ({ isLoggedIn, setIsLoggedIn }) => {
+const Header = ({ isLoggedIn, setIsLoggedIn, isAdmin, setIsAdmin }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -40,11 +42,14 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
       console.error('로그아웃 API 통신 에러:', error);
     } finally {
       sessionStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('isAdmin');
       sessionStorage.removeItem('userInfo');
       sessionStorage.removeItem('accessToken');
       sessionStorage.removeItem('refreshToken');
 
       setIsLoggedIn(false);
+      if (setIsAdmin) setIsAdmin(false);
+      
       alert("로그아웃 되었습니다.");
       navigate('/');
     }
@@ -89,7 +94,6 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           </div>
 
           <nav className="header-nav">
-            
             {!isMobile && (
               <Link to="/" className="nav-item">
                 <img src={HomeIcon} alt="Home" className="nav-icon" />
@@ -97,7 +101,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
               </Link>
             )}
 
-           
+            {!isMobile && isLoggedIn && isAdmin && (
+              <Link to="/admin" className="nav-item admin-nav-item">
+                <img src={AdminIcon || LoginIcon} alt="Admin" className="nav-icon" />
+                <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>Admin</span>
+              </Link>
+            )}
+
             {!isMobile && (
               <div className="login-wrapper" ref={loginWrapperRef}>
                 {isLoggedIn ? (
@@ -132,11 +142,17 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           isOpen={isSidebarOpen} 
           onClose={toggleSidebar} 
           isLoggedIn={isLoggedIn} 
+          isAdmin={isAdmin}
           onLogout={handleLogout} 
           onLogin={handleKakaoLogin}
         />
       ) : (
-        <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} isLoggedIn={isLoggedIn} />
+        <Sidebar 
+          isOpen={isSidebarOpen} 
+          onClose={toggleSidebar} 
+          isLoggedIn={isLoggedIn} 
+          isAdmin={isAdmin}
+        />
       )}
     </>
   );
