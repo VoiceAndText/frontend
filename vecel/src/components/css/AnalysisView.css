@@ -319,7 +319,6 @@
   padding-bottom: 30px;
 }
 
-/* (선택) 스크롤바 디자인을 얇고 예쁘게 변경 */
 .analysis-scroll-area::-webkit-scrollbar {
   width: 6px;
 }

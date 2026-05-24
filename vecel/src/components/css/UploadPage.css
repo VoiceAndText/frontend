@@ -295,8 +295,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.55); /* 화면을 덮는 반투명한 회색빛 */
-  z-index: 9999; /* 화면 최상단에 띄워 모든 클릭을 차단 */
+  background-color: rgba(0, 0, 0, 0.55); 
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -323,7 +323,6 @@
   line-height: 1.5;
 }
 
-/* 빙글빙글 돌아가는 로딩 스피너 */
 .spinner {
   width: 45px;
   height: 45px;

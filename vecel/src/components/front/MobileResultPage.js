@@ -9,7 +9,6 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   const [viewStep, setViewStep] = useState(uploadedId ? 'detail' : 'list');
 
-  // 💡 로그인 여부 확인 변수
   const isLoggedIn = !!sessionStorage.getItem('accessToken');
 
   const handleDelete = async () => {
@@ -88,14 +87,12 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
                 </div>
               ))
             ) : (
-              /* ✨ 데이터가 없을 때 표시할 안내 문구 */
               <div className="m-empty-list-notice">
                 <p>음성 파일을 업로드해주세요.</p>
               </div>
             )}
           </div>
           
-          {/* ✨ 모바일 회원 전용: 삭제하기 버튼 유지, 분석하기 -> 결과보기 텍스트 변경 */}
           {isLoggedIn && (
             <div className="m-bottom-button-group">
               <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
@@ -114,7 +111,6 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
     <div className="m-page-wrapper">
       <div className="m-detail-panel">
         
-        {/* ✨ 비회원(단일 파일)일 경우 오디오 목록으로 가는 뒤로가기 버튼 감추기 */}
         {isLoggedIn && (
           <div className="m-top-back-nav">
             <button className="m-btn-back-to-list" onClick={() => setViewStep('list')}>

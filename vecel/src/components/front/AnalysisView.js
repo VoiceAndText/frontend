@@ -4,21 +4,17 @@ import '../css/AnalysisView.css';
 const AnalysisView = ({ audioId, analysisResult }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 1. 방어 로직: 데이터가 없거나 배열이 비어있으면 렌더링하지 않음
   if (!analysisResult || !analysisResult.timeSeriesAnalysis || analysisResult.timeSeriesAnalysis.length === 0) {
     return <div className="empty-msg">분석 데이터가 없습니다.</div>;
   }
 
-  // 2. 실제 백엔드 데이터 분해
   const { primaryEmotion, dissonanceIndex, timeSeriesAnalysis } = analysisResult;
   
-  // 전체 페이지 수 = 문장 개수 + 마지막 종합 그래프 페이지(1)
   const totalPages = timeSeriesAnalysis.length + 1;
   const isSummaryPage = currentIndex === timeSeriesAnalysis.length;
 
   return (
     <div className="analysis-view-container">
-      {/* --- [공통 상단: 헤더 및 페이지네이션] --- */}
       <div className="analysis-header">
         <h4>{isSummaryPage ? '시계열 스트레스 분석 그래프' : '멀티 모달 반어법 분석 결과'}</h4>
         <div className="pagination-controls">
@@ -30,7 +26,6 @@ const AnalysisView = ({ audioId, analysisResult }) => {
 
       <div className="analysis-scroll-area">
         
-        {/* 페이지 상태에 따라 렌더링 분기 */}
         {isSummaryPage ? (
           <SummaryChartView 
             pts={timeSeriesAnalysis} 
@@ -49,16 +44,13 @@ const AnalysisView = ({ audioId, analysisResult }) => {
   );
 };
 
-// 💡 [컴포넌트 1] 마지막 페이지: 종합 시계열 그래프
 const SummaryChartView = ({ pts, primaryEmotion, dissonanceIndex }) => {
-  // 불일치 점수가 가장 높았던 문장 찾기
   const topPt = pts.reduce((prev, curr) => prev.dissonance_score > curr.dissonance_score ? prev : curr);
 
   const chartW = 500;
-  const chartH = 220; // 콤팩트한 높이
+  const chartH = 220;
   const padding = 45;
   
-  // 점 좌표 계산 (X축은 균등 분배, Y축은 점수에 비례)
   const points = pts.map((p, i) => ({
     x: padding + (i / (pts.length - 1 || 1) * (chartW - padding * 2)),
     y: (chartH - padding) - (p.dissonance_score / 100 * (chartH - padding * 2))
@@ -69,7 +61,6 @@ const SummaryChartView = ({ pts, primaryEmotion, dissonanceIndex }) => {
     <div className="time-series-content">
       <div className="svg-line-chart-wrapper-compact">
         <svg width="100%" height="100%" viewBox={`0 0 ${chartW} ${chartH}`}>
-          {/* Y축 그리드 (20 단위) */}
           {[0, 20, 40, 60, 80, 100].map(v => {
             const y = (chartH - padding) - (v / 100 * (chartH - padding * 2));
             return (
@@ -80,10 +71,9 @@ const SummaryChartView = ({ pts, primaryEmotion, dissonanceIndex }) => {
             );
           })}
           
-          {/* X축 시간 표시 */}
           {pts.map((p, i) => {
             const x = padding + (i / (pts.length - 1 || 1) * (chartW - padding * 2));
-            const timeLabel = p.time_range.split(' ')[0]; // 예: "4.8s - 5.9s" -> "4.8s"
+            const timeLabel = p.time_range.split(' ')[0];
             return (
               <g key={i}>
                 <text x={x} y={chartH - padding + 18} textAnchor="middle" className="chart-axis-text-sm" fill="#999" fontSize="10">{timeLabel}</text>
@@ -110,9 +100,7 @@ const SummaryChartView = ({ pts, primaryEmotion, dissonanceIndex }) => {
   );
 };
 
-// 💡 [컴포넌트 2] 일반 문장 페이지: 개별 문장 상세 분석
 const SentenceDetailView = ({ currentData, index }) => {
-  // 원형 게이지 차트(도넛 차트) 그리기 위한 수식
   const score = currentData.dissonance_score;
   const size = 180; 
   const center = size / 2; 
@@ -128,7 +116,6 @@ const SentenceDetailView = ({ currentData, index }) => {
           {index + 1}. {currentData.stt_chunk} <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 'normal' }}>({currentData.time_range})</span>
         </p>
 
-        {/* 텍스트 감정과 음성 감정 비교 카드 */}
         <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
           <div style={{ flex: 1, padding: '15px', backgroundColor: '#f4f5f7', borderRadius: '8px', textAlign: 'center' }}>
             <span style={{ fontSize: '0.85rem', color: '#666' }}>텍스트 감정</span>
@@ -148,13 +135,10 @@ const SentenceDetailView = ({ currentData, index }) => {
         </div>
       </div>
 
-      {/* 불일치 점수 게이지 차트 */}
       <div className="analysis-chart-visual" style={{ width: '100%', marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
         <div className="svg-chart-wrapper" style={{ width: `${size}px`, height: `${size}px`, position: 'relative' }}>
           <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
-            {/* 배경 원 */}
             <circle cx={center} cy={center} r={radius} fill="transparent" stroke="#f0f0f0" strokeWidth="15" />
-            {/* 점수 원 */}
             <circle 
               cx={center} cy={center} r={radius} fill="transparent" 
               stroke={currentData.is_conflict ? "#ff5e5e" : "#b1accf"} 

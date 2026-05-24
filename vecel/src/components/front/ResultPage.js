@@ -23,7 +23,6 @@ const ResultPage = () => {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // 💡 로그인 여부 확인 변수
   const isLoggedIn = !!sessionStorage.getItem('accessToken');
 
   const formatTime = (time) => {
@@ -222,7 +221,6 @@ const ResultPage = () => {
 
         <div className="result-left-panel">
           <div className="audio-list-container">
-            {/* ✨ 여기가 수정된 핵심 부분입니다 */}
             {audioList.length > 0 ? (
               audioList.map((audio) => (
                 <div 
@@ -260,14 +258,12 @@ const ResultPage = () => {
                 </div>
               ))
             ) : (
-              /* ✨ 파일이 없을 때 보여줄 안내 문구 */
               <div className="empty-list-notice">
                 <p>음성 파일을 업로드해주세요.</p>
               </div>
             )}
           </div>
           
-          {/* PC 회원: 분석하기 버튼 삭제, 삭제하기 버튼만 표시 / 비회원: 아예 안 보임 */}
           {isLoggedIn && (
             <div className="left-action-buttons">
               <button className="btn-delete" onClick={handleDelete}>삭제하기</button>

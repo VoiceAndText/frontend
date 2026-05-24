@@ -107,8 +107,8 @@ const UploadPage = () => {
             intervalRef.current = null;
             timeoutRef.current = null;
             
-            setIsUploading(false); // 가리개 해제
-            alert('분석이 완료되었습니다!'); // 💡 기존 알림창 방식 그대로 유지!
+            setIsUploading(false);
+            alert('분석이 완료되었습니다!');
             
             if (activeToken) {
               navigate(`/results?id=${analysisRequestId}`, {
@@ -155,7 +155,7 @@ const UploadPage = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    setIsUploading(true); // 💡 업로드 시작 시 전체 화면 가리개 활성화
+    setIsUploading(true);
 
     try {
       const sourceType = fileSource;
@@ -237,7 +237,6 @@ const UploadPage = () => {
   return (
     <div className="upload-page-wrapper">
       
-      {/* ✨ 전체화면 클릭 방지 가리개 (로딩 팝업) 추가 */}
       {isUploading && (
         <div className="global-overlay">
           <div className="popup-box">
