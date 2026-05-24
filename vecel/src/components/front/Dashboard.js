@@ -110,15 +110,22 @@ const Dashboard = () => {
         <div style={{ background: '#2d3748', padding: '20px', borderRadius: '8px', border: '1px solid #4a5568', minHeight: '300px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px', color: '#f56565' }}>Critical System Failures</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {metrics.recentErrors.map((err) => (
-              <div key={err.analysisRequestId} style={{ background: '#1a202c', padding: '12px', borderRadius: '6px', borderLeft: '4px solid #e53e3e', fontSize: '13px' }}>
-                <div style={{ display: 'flex', justifyContent: 'between', color: '#a0aec0', marginBottom: '4px' }}>
-                  <span>Req #{err.analysisRequestId} (User ID: {err.userId})</span>
-                  <span style={{ marginLeft: 'auto' }}>{err.createdAt ? new Date(err.createdAt).toLocaleTimeString() : ''}</span>
+            {metrics.recentErrors.map((err) => {
+              const logTime = err.createdAt ? (() => {
+                const utcDate = err.createdAt.endsWith('Z') ? err.createdAt : `${err.createdAt}Z`;
+                return new Date(utcDate).toLocaleTimeString('ko-KR');
+              })() : '';
+
+              return (
+                <div key={err.analysisRequestId} style={{ background: '#1a202c', padding: '12px', borderRadius: '6px', borderLeft: '4px solid #e53e3e', fontSize: '13px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'between', color: '#a0aec0', marginBottom: '4px' }}>
+                    <span>Req #{err.analysisRequestId} (User ID: {err.userId})</span>
+                    <span style={{ marginLeft: 'auto' }}>{logTime}</span>
+                  </div>
+                  <div style={{ color: '#fc8181', fontWeight: '500' }}>{err.errorMessage || 'Unknown Fatal Error'}</div>
                 </div>
-                <div style={{ color: '#fc8181', fontWeight: '500' }}>{err.errorMessage || 'Unknown Fatal Error'}</div>
-              </div>
-            ))}
+              );
+            })}
             {metrics.recentErrors.length === 0 && (
               <div style={{ textAlign: 'center', color: '#48bb78', paddingTop: '50px', fontWeight: 'bold' }}>System Healthy. No errors detected.</div>
             )}
