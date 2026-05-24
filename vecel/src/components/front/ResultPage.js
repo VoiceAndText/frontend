@@ -34,27 +34,24 @@ const ResultPage = () => {
     }
   }, [uploadedId, analysisResult, location.state]);
 
-  useEffect(() => {
-    // 주소창에 방금 업로드한 id가 있고, 보따리에 음성 파일 URL이 들어있다면?
-    if (uploadedId && location.state?.audioUrl) {
-      setAudioList(prevList => {
-        // 이미 리스트에 이 파일이 있는지 검사 (중복 추가 방지)
-        const isExist = prevList.find(audio => audio.id === Number(uploadedId));
-        
-        if (!isExist) {
-          // 리스트에 없으면 새로운 가상의 오디오 객체를 만들어서 맨 앞에 끼워 넣음!
-          const newAudio = {
-            id: Number(uploadedId),
-            name: '방금 분석한 음성 파일', // 나중에 UploadPage에서 진짜 이름을 넘겨받아도 됩니다.
-            duration: '방금 전',
-            audioUrl: location.state.audioUrl // 이 주소로 나중에 재생 기능을 연결합니다.
-          };
-          return [newAudio, ...prevList];
-        }
-        return prevList;
-      });
-    }
-  }, [uploadedId, location.state]);
+  // ✨ 누락되었던 마법의 시간 변환 함수!
+  const formatTime = (time) => {
+    if (!time || isNaN(time)) return '00:00';
+    const m = Math.floor(time / 60).toString().padStart(2, '0');
+    const s = Math.floor(time % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  // ✨ 누락되었던 진행 바 건너뛰기 함수!
+  const handleProgressClick = (e) => {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newTime = (clickX / rect.width) * duration;
+    
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
 
   useEffect(() => {
     if (uploadedId && location.state?.audioUrl) {
@@ -73,7 +70,6 @@ const ResultPage = () => {
     }
   }, [uploadedId, location.state]);
 
-  // 💡 3. isPlaying 상태가 바뀔 때마다 실제 오디오 재생/일시정지 동기화
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
