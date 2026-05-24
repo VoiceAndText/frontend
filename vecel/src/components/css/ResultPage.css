@@ -259,3 +259,11 @@
   font-size: 16px;
 }
 
+.empty-list-notice { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  height: 200px; 
+  color: #888; 
+  font-size: 14px; 
+}
