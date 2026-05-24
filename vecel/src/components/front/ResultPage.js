@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import TextView from './TextView';
 import AnalysisView from './AnalysisView';
@@ -13,14 +13,17 @@ const ResultPage = () => {
   const [audioList, setAudioList] = useState([]);
   const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
-  const [isPlaying, setIsPlaying] = useState(true);
+  const audioRef = useRef(null); // 실제 <audio> 태그를 조종할 리모컨
+  const [isPlaying, setIsPlaying] = useState(false); // 초기 상태는 일시정지
+  const [currentTime, setCurrentTime] = useState(0); // 현재 재생 시간 (초)
+  const [duration, setDuration] = useState(0); // 전체 오디오 길이 (초)
 
   // 1. 모바일 화면 감지 로직
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     // 결과 페이지에 진입하면 무조건 뜨는 기본 확인 로그
-    console.log("🚀 [ResultPage] 업데이트 ver.2 적용 완료! 결과 화면에 정상 진입했습니다.");
+    console.log("🚀 [ResultPage] 업데이트 ver.3 적용 완료! 결과 화면에 정상 진입했습니다.");
 
     // 만약 업로드 페이지에서 분석이 완료되어 넘어온 경우라면 데이터 분실 여부까지 검사
     if (uploadedId) {
@@ -52,6 +55,34 @@ const ResultPage = () => {
       });
     }
   }, [uploadedId, location.state]);
+
+  useEffect(() => {
+    if (uploadedId && location.state?.audioUrl) {
+      setAudioList(prevList => {
+        const isExist = prevList.find(audio => audio.id === Number(uploadedId));
+        if (!isExist) {
+          return [{
+            id: Number(uploadedId),
+            name: '방금 분석한 음성 파일',
+            duration: '방금 전',
+            audioUrl: location.state.audioUrl 
+          }, ...prevList];
+        }
+        return prevList;
+      });
+    }
+  }, [uploadedId, location.state]);
+
+  // 💡 3. isPlaying 상태가 바뀔 때마다 실제 오디오 재생/일시정지 동기화
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(e => console.log("재생 대기:", e));
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying, activeAudioId]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -90,13 +121,30 @@ const ResultPage = () => {
     } else {
       setActiveAudioId(id);
       setIsPlaying(true);
+      setCurrentTime(0);
     }
   };
+
+  // 현재 선택된 오디오 객체 찾기
+  const activeAudio = audioList.find(a => a.id === activeAudioId);
+  // 진행률 퍼센트 계산
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="result-page-wrapper">
       <div className="result-page-container">
         
+        {/* ✨ 화면에 보이지 않는 진짜 오디오 플레이어 ✨ */}
+        {activeAudio && activeAudio.audioUrl && (
+          <audio
+            ref={audioRef}
+            src={activeAudio.audioUrl}
+            onTimeUpdate={() => setCurrentTime(audioRef.current.currentTime)} // 1초마다 현재 시간 업데이트
+            onLoadedMetadata={() => setDuration(audioRef.current.duration)}   // 오디오 길이를 알아냈을 때 업데이트
+            onEnded={() => { setIsPlaying(false); setCurrentTime(0); }}       // 노래가 끝나면 정지
+          />
+        )}
+
         {/* 좌측 패널: 오디오 리스트 */}
         <div className="result-left-panel">
           <div className="audio-list-container">
@@ -123,15 +171,16 @@ const ResultPage = () => {
                     <span className="audio-duration">{audio.duration}</span>
                   </div>
                 </div>
+                {/* 💡 5. 가짜 데이터 대신 실제 계산된 진행률(progressPercent)과 시간(formatTime) 적용 */}
                 {activeAudioId === audio.id && (
                   <div className="audio-progress-section">
-                    <div className="progress-bar-bg">
-                      <div className="progress-bar-fill" style={{ width: '15%' }}></div>
-                      <div className="progress-bar-thumb" style={{ left: '15%' }}></div>
+                    <div className="progress-bar-bg" onClick={handleProgressClick} style={{ cursor: 'pointer' }}>
+                      <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
+                      <div className="progress-bar-thumb" style={{ left: `${progressPercent}%` }}></div>
                     </div>
                     <div className="progress-time">
-                      <span>{audio.currentTime || '00:00:00'}</span>
-                      <span>{audio.totalTime || '00:04:01'}</span>
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{formatTime(duration)}</span>
                     </div>
                   </div>
                 )}
