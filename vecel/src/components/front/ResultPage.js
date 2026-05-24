@@ -33,16 +33,6 @@ const ResultPage = () => {
     return `${m}:${s}`;
   };
 
-  const handleProgressClick = (e) => {
-    if (!audioRef.current || !duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const newTime = (clickX / rect.width) * duration;
-    
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
   useEffect(() => {
     if (uploadedId && location.state?.audioUrl) {
       setAudioList(prevList => {
@@ -130,16 +120,6 @@ const ResultPage = () => {
     }
   };
 
-  const handlePlayToggle = async (e, id) => {
-    e.stopPropagation();
-    if (activeAudioId === id) {
-      setIsPlaying(!isPlaying);
-    } else {
-      await handleCardClick(id);
-      setIsPlaying(true);
-    }
-  };
-
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying && audioRef.current.src) {
@@ -204,7 +184,6 @@ const ResultPage = () => {
   };
 
   const activeAudio = audioList.find(a => a.id === activeAudioId);
-  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="result-page-wrapper">

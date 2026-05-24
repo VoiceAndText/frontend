@@ -45,20 +45,6 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
     }
   };
 
-  const handlePlayToggle = (e, id) => {
-    e.stopPropagation();
-    if (activeAudioId === id) {
-      setIsPlaying(!isPlaying);
-    } else {
-      setActiveAudioId(id);
-      setIsPlaying(true);
-    }
-  };
-
-  const handleCardClick = (id) => {
-    setActiveAudioId(id);
-  };
-
   if (viewStep === 'list') {
     return (
       <div className="m-page-wrapper">
