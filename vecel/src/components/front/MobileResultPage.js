@@ -117,7 +117,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
         )}
 
         <div className="m-tab-button-header">
-          <button className={`m-tab-item-btn ${activeTab === 'text' ? 'active' : ''}`} onClick={() => setActiveTab('text')}>텍스트로 표시</button>
+          <button className={`m-tab-item-btn ${activeTab === 'text' ? 'active' : ''}`} onClick={() => setActiveTab('text')}>텍스트로 보기</button>
           <button className={`m-tab-item-btn ${activeTab === 'analysis' ? 'active' : ''}`} onClick={() => setActiveTab('analysis')}>분석 결과</button>
         </div>
         
