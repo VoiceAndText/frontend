@@ -64,38 +64,23 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
       <div className="m-page-wrapper">
         <div className="m-list-panel">
           <div className="m-audio-list-scroll">
-            {audioList.map((audio) => (
-              <div 
-                key={audio.id} 
-                className={`m-audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
-                onClick={() => handleCardClick(audio.id)}
-              >
-                <div className="m-audio-card-top">
-                  <div className="m-play-btn-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#a09db9">
-                      {activeAudioId === audio.id && isPlaying 
-                        ? <><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>
-                        : <polygon points="5 3 19 12 5 21 5 3"/>
-                      }
-                    </svg>
-                  </div>
-                  <div className="m-audio-info-texts">
+            {audioList.length > 0 ? (
+              audioList.map((audio) => (
+                <div key={audio.id} className="m-audio-card" onClick={() => setActiveAudioId(audio.id)}>
+                   <div className="m-audio-info-texts">
                     <span className="m-audio-name-title">{audio.name}</span>
                     <span className="m-audio-duration-time">{audio.duration}</span>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="m-empty-list-notice"><p>음성 파일을 업로드해주세요.</p></div>
+            )}
           </div>
-          
-          {/* ✨ 모바일 회원 전용: 삭제하기 버튼 유지, 분석하기 -> 결과보기 텍스트 변경 */}
-          {isLoggedIn && (
+          {isLoggedIn && audioList.length > 0 && (
             <div className="m-bottom-button-group">
               <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
-              <button className="m-btn-action-analyze" onClick={() => {
-                if (!activeAudioId) return alert("오디오를 선택해 주세요.");
-                setViewStep('detail');
-              }}>결과보기</button>
+              <button className="m-btn-action-analyze" onClick={() => { if(activeAudioId) setViewStep('detail'); }}>결과보기</button>
             </div>
           )}
         </div>
@@ -111,7 +96,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
         {isLoggedIn && (
           <div className="m-top-back-nav">
             <button className="m-btn-back-to-list" onClick={() => setViewStep('list')}>
-              ← 오디오 목록으로 가기
+              ← 음성 목록으로 가기
             </button>
           </div>
         )}
