@@ -171,12 +171,42 @@ const ResultPage = () => {
     );
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
-    if (window.confirm("정말 삭제하시겠습니까?")) {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return; // 취소 누르면 종료
+
+    const token = sessionStorage.getItem('accessToken');
+
+    try {
+      // 1. 로그인한 회원이라면 백엔드 서버에 진짜 삭제 요청(DELETE) 보내기
+      if (token) {
+        const res = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error("서버에서 파일 삭제를 실패했습니다.");
+        }
+      }
+
+      // 2. 서버 삭제가 성공했거나(회원), 비회원일 경우 프론트엔드 화면에서 지우기
       setAudioList(prev => prev.filter(a => a.id !== activeAudioId));
       setActiveAudioId(null);
       setIsPlaying(false);
+      
+      // 💡 삭제 후 우측 분석 결과 화면도 텅 빈 상태로 초기화!
+      if (typeof setAnalysisResult === 'function') {
+        setAnalysisResult(null); 
+      }
+      
+      alert("성공적으로 삭제되었습니다.");
+
+    } catch (error) {
+      console.error("파일 삭제 에러:", error);
+      alert("파일 삭제 중 오류가 발생했습니다.");
     }
   };
 

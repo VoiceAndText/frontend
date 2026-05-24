@@ -9,13 +9,36 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   const [viewStep, setViewStep] = useState(uploadedId ? 'detail' : 'list');
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
-    if (window.confirm("정말 삭제하시겠습니까?")) {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+    const token = sessionStorage.getItem('accessToken');
+
+    try {
+      if (token) {
+        const res = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error("서버에서 파일 삭제를 실패했습니다.");
+        }
+      }
+
       setAudioList(prev => prev.filter(a => a.id !== activeAudioId));
       setActiveAudioId(null);
       setIsPlaying(false);
-      setViewStep('list');
+      setViewStep('list'); // 💡 모바일 전용: 삭제 후 상세 화면에서 리스트 화면으로 강제 이동
+      
+      alert("성공적으로 삭제되었습니다.");
+
+    } catch (error) {
+      console.error("파일 삭제 에러:", error);
+      alert("파일 삭제 중 오류가 발생했습니다.");
     }
   };
 
