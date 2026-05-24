@@ -100,7 +100,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
             <div className="m-bottom-button-group">
               <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
               <button className="m-btn-action-analyze" onClick={() => {
-                if (!activeAudioId) return alert("오디오를 선택해 주세요.");
+                if (!activeAudioId) return alert("음성파일을 선택해 주세요.");
                 setViewStep('detail');
               }}>결과보기</button>
             </div>
