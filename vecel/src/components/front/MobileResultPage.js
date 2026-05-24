@@ -3,14 +3,6 @@ import TextView from './TextView';
 import AnalysisView from './AnalysisView';
 import '../css/MobileResultPage.css';
 
-const initialMockAudioList = [
-  { id: 1, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-  { id: 2, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-  { id: 3, name: 'AUD-02122025.WAV', duration: '00:17:59', currentTime: '00:00:00', totalTime: '00:04:01' },
-  { id: 4, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-  { id: 5, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-];
-
 const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult }) => {
   const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
   const [isPlaying, setIsPlaying] = useState(false);

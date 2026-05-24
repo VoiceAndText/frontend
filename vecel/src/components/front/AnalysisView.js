@@ -1,25 +1,9 @@
 import React, { useState } from 'react';
 import '../css/AnalysisView.css';
 
-const sentenceAnalysisData = {
-  3: [
-    { sentence: "안녕하세요, 홍길동 입니다. (00:01~00:04)", evaluation: "반어법, 감정 불일치", stressIndex: 82, confidence: [{ label: "분노", value: 48.8, color: "#6a5acd" }, { label: "중립", value: 24.3, color: "#9896b5" }, { label: "슬픔", value: 14.6, color: "#b1accf" }, { label: "행복", value: 12.3, color: "#d1cff1" }] },
-    { sentence: "택배 문제로 연락 드렸는데요. (00:04~00:06)", evaluation: "불만 표출, 직접적 감정", stressIndex: 65, confidence: [{ label: "분노", value: 55.0, color: "#6a5acd" }, { label: "중립", value: 30.0, color: "#9896b5" }, { label: "슬픔", value: 10.0, color: "#b1accf" }, { label: "행복", value: 5.0, color: "#d1cff1" }] },
-    { sentence: "저번에 제가 받은 택배가 오지 않아서요. (00:06~00:10)", evaluation: "의문 제기, 중립적 태도", stressIndex: 42, confidence: [{ label: "중립", value: 60.5, color: "#9896b5" }, { label: "슬픔", value: 20.2, color: "#b1accf" }, { label: "분노", value: 15.3, color: "#6a5acd" }, { label: "행복", value: 4.0, color: "#d1cff1" }] },
-    // 마지막 4페이지: 시계열 스트레스 분석 데이터
-    { 
-      isFinal: true, 
-      timeSeries: [
-        { time: 0, stress: 10 }, { time: 10, stress: 40 }, { time: 20, stress: 58 }, 
-        { time: 30, stress: 62 }, { time: 40, stress: 68 }, { time: 50, stress: 60 }, { time: 60, stress: 78 }
-      ]
-    }
-  ]
-};
-
 const AnalysisView = ({ audioId, analysisResult }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const dataList = analysisResult || sentenceAnalysisData[audioId] || [];
+  const dataList = analysisResult || [];
   const currentData = dataList[currentIndex];
 
   if (!currentData) return <div className="empty-msg">분석 데이터가 없습니다.</div>;

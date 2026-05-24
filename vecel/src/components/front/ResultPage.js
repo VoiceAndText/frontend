@@ -5,21 +5,13 @@ import AnalysisView from './AnalysisView';
 import MobileResultPage from './MobileResultPage'; // 💡 모바일용 컴포넌트 임포트
 import '../css/ResultPage.css'; // PC용 오리지널 CSS
 
-const initialMockAudioList = [
-  { id: 1, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-  { id: 2, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-  { id: 3, name: 'AUD-02122025.WAV', duration: '00:17:59', currentTime: '00:00:00', totalTime: '00:04:01' },
-  { id: 4, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-  { id: 5, name: 'AUD-02122025.WAV', duration: '00:17:59' },
-];
-
 const ResultPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const uploadedId = searchParams.get('id'); // 주소창의 ?id=번호 읽기
   const analysisResult = location.state?.analysisResult || null; // UploadPage에서 보낸 진짜 데이터
-  const [audioList, setAudioList] = useState(initialMockAudioList);
-  const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : 3);
+  const [audioList, setAudioList] = useState([]);
+  const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   const [isPlaying, setIsPlaying] = useState(true);
 
