@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import '../css/AdminUsers.css';
 import { fetchWithAuth } from './api';
 
@@ -17,7 +17,28 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [logLoading, setLogLoading] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchUserLogs = useCallback(async (userId) => {
+    setLogLoading(true);
+    try {
+      const response = await fetchWithAuth(`/api/v1/admin/users/${userId}/logs?page=0&size=50&sort=createdAt,desc`, {
+        method: 'GET'
+      });
+      const resBody = await response.json();
+
+      if (resBody && resBody.success && resBody.data && resBody.data.content) {
+        setUserLogs(resBody.data.content);
+      } else {
+        setUserLogs([]);
+      }
+    } catch (error) {
+      console.error('개별 사용자 로그 조회 실패:', error);
+      setUserLogs([]);
+    } finally {
+      setLogLoading(false);
+    }
+  }, []);
+
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await fetchWithAuth('/api/v1/admin/users?page=0&size=100', {
         method: 'GET'
@@ -43,32 +64,11 @@ const AdminUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchUserLogs = async (userId) => {
-    setLogLoading(true);
-    try {
-      const response = await fetchWithAuth(`/api/v1/admin/users/${userId}/logs?page=0&size=50&sort=createdAt,desc`, {
-        method: 'GET'
-      });
-      const resBody = await response.json();
-
-      if (resBody && resBody.success && resBody.data && resBody.data.content) {
-        setUserLogs(resBody.data.content);
-      } else {
-        setUserLogs([]);
-      }
-    } catch (error) {
-      console.error('개별 사용자 로그 조회 실패:', error);
-      setUserLogs([]);
-    } finally {
-      setLogLoading(false);
-    }
-  };
+  }, [selectedUser, fetchUserLogs]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => 
