@@ -9,6 +9,9 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
   const [viewStep, setViewStep] = useState(uploadedId ? 'detail' : 'list');
 
+  // 💡 로그인 여부 확인 변수
+  const isLoggedIn = !!sessionStorage.getItem('accessToken');
+
   const handleDelete = async () => {
     if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
@@ -32,7 +35,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
       setAudioList(prev => prev.filter(a => a.id !== activeAudioId));
       setActiveAudioId(null);
       setIsPlaying(false);
-      setViewStep('list'); // 💡 모바일 전용: 삭제 후 상세 화면에서 리스트 화면으로 강제 이동
+      setViewStep('list'); 
       
       alert("성공적으로 삭제되었습니다.");
 
@@ -85,13 +88,16 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
             ))}
           </div>
           
-          <div className="m-bottom-button-group">
-            <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
-            <button className="m-btn-action-analyze" onClick={() => {
-              if (!activeAudioId) return alert("오디오를 선택해 주세요.");
-              setViewStep('detail');
-            }}>분석하기</button>
-          </div>
+          {/* ✨ 모바일 회원 전용: 삭제하기 버튼 유지, 분석하기 -> 결과보기 텍스트 변경 */}
+          {isLoggedIn && (
+            <div className="m-bottom-button-group">
+              <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
+              <button className="m-btn-action-analyze" onClick={() => {
+                if (!activeAudioId) return alert("오디오를 선택해 주세요.");
+                setViewStep('detail');
+              }}>결과보기</button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -100,11 +106,15 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
   return (
     <div className="m-page-wrapper">
       <div className="m-detail-panel">
-        <div className="m-top-back-nav">
-          <button className="m-btn-back-to-list" onClick={() => setViewStep('list')}>
-            ← 오디오 목록으로 가기
-          </button>
-        </div>
+        
+        {/* ✨ 비회원(단일 파일)일 경우 오디오 목록으로 가는 뒤로가기 버튼 감추기 */}
+        {isLoggedIn && (
+          <div className="m-top-back-nav">
+            <button className="m-btn-back-to-list" onClick={() => setViewStep('list')}>
+              ← 오디오 목록으로 가기
+            </button>
+          </div>
+        )}
 
         <div className="m-tab-button-header">
           <button className={`m-tab-item-btn ${activeTab === 'text' ? 'active' : ''}`} onClick={() => setActiveTab('text')}>텍스트로 표시</button>

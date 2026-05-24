@@ -10,7 +10,6 @@ const ResultPage = () => {
   const [searchParams] = useSearchParams();
   const uploadedId = searchParams.get('id');
   
-  // 💡 1. analysisResult를 상수가 아닌 상태(State)로 변경합니다. (다른 파일 클릭 시 갱신을 위해)
   const [analysisResult, setAnalysisResult] = useState(location.state?.analysisResult || null);
   
   const [audioList, setAudioList] = useState([]);
@@ -23,6 +22,9 @@ const ResultPage = () => {
   const [duration, setDuration] = useState(0);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // 💡 로그인 여부 확인 변수
+  const isLoggedIn = !!sessionStorage.getItem('accessToken');
 
   const formatTime = (time) => {
     if (!time || isNaN(time)) return '00:00';
@@ -41,7 +43,6 @@ const ResultPage = () => {
     setCurrentTime(newTime);
   };
 
-  // 방금 업로드한 파일 처리
   useEffect(() => {
     if (uploadedId && location.state?.audioUrl) {
       setAudioList(prevList => {
@@ -61,7 +62,6 @@ const ResultPage = () => {
     }
   }, [uploadedId, location.state]);
 
-  // 회원일 경우 서버에서 내 파일 목록 불러오기
   useEffect(() => {
     const fetchMyAudioList = async () => {
       const token = sessionStorage.getItem('accessToken');
@@ -79,7 +79,7 @@ const ResultPage = () => {
             id: file.analysisRequestId,
             name: file.originalFileName,
             duration: formatTime(file.durationSeconds),
-            audioUrl: null // 초기엔 재생 링크가 없음
+            audioUrl: null
           }));
 
           setAudioList(prevList => {
@@ -96,56 +96,50 @@ const ResultPage = () => {
     fetchMyAudioList();
   }, []);
 
-  // ✨ 2. 리스트를 클릭했을 때 해당 파일의 '재생 링크'와 '분석 결과'를 가져오는 핵심 함수!
   const handleCardClick = async (id) => {
-    if (activeAudioId === id) return; // 이미 선택된 파일이면 무시
+    if (activeAudioId === id) return;
 
     setActiveAudioId(id);
     setIsPlaying(false);
     setCurrentTime(0);
-    setAnalysisResult(null); // 로딩 중 빈 화면을 위해 초기화
+    setAnalysisResult(null);
 
     const token = sessionStorage.getItem('accessToken');
     if (!token) return;
 
     try {
-      // [API 1] 재생 링크(presigned-url) 발급받기
       const urlRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${id}/presigned-url`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (urlRes.ok) {
         const urlData = await urlRes.json();
-        // audioList 업데이트 (해당 파일에 발급받은 URL 쏙 집어넣기)
         setAudioList(prev => prev.map(audio => 
           audio.id === id ? { ...audio, audioUrl: urlData.data.presignedUrl } : audio
         ));
       }
 
-      // [API 2] 분석 결과 알맹이 가져오기
       const analysisRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/analysis/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (analysisRes.ok) {
         const analysisData = await analysisRes.json();
-        setAnalysisResult(analysisData.data.result); // 우측 뷰에 데이터 뿌려주기!
+        setAnalysisResult(analysisData.data.result);
       }
     } catch (error) {
       console.error("상세 정보 불러오기 에러:", error);
     }
   };
 
-  // ✨ 3. 재생 버튼 클릭 시 로직 연동
   const handlePlayToggle = async (e, id) => {
     e.stopPropagation();
     if (activeAudioId === id) {
       setIsPlaying(!isPlaying);
     } else {
-      await handleCardClick(id); // 데이터 먼저 가져오고
-      setIsPlaying(true);        // 재생 시작
+      await handleCardClick(id);
+      setIsPlaying(true);
     }
   };
 
-  // 오디오 재생 동기화
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying && audioRef.current.src) {
@@ -154,7 +148,7 @@ const ResultPage = () => {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, activeAudioId, audioList]); // audioList가 갱신되어 src가 생겼을 때도 감지
+  }, [isPlaying, activeAudioId, audioList]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -175,12 +169,11 @@ const ResultPage = () => {
 
   const handleDelete = async () => {
     if (!activeAudioId) return alert("삭제할 파일을 선택해 주세요.");
-    if (!window.confirm("정말 삭제하시겠습니까?")) return; // 취소 누르면 종료
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     const token = sessionStorage.getItem('accessToken');
 
     try {
-      // 1. 로그인한 회원이라면 백엔드 서버에 진짜 삭제 요청(DELETE) 보내기
       if (token) {
         const res = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}`, {
           method: 'DELETE',
@@ -194,12 +187,10 @@ const ResultPage = () => {
         }
       }
 
-      // 2. 서버 삭제가 성공했거나(회원), 비회원일 경우 프론트엔드 화면에서 지우기
       setAudioList(prev => prev.filter(a => a.id !== activeAudioId));
       setActiveAudioId(null);
       setIsPlaying(false);
       
-      // 💡 삭제 후 우측 분석 결과 화면도 텅 빈 상태로 초기화!
       if (typeof setAnalysisResult === 'function') {
         setAnalysisResult(null); 
       }
@@ -235,7 +226,7 @@ const ResultPage = () => {
               <div 
                 key={audio.id} 
                 className={`audio-card ${activeAudioId === audio.id ? 'active' : ''}`}
-                onClick={() => handleCardClick(audio.id)} // 💡 클릭 시 데이터 가져오는 함수 연결
+                onClick={() => handleCardClick(audio.id)}
               >
                 <div className="audio-card-top">
                   <div className="play-icon-circle" onClick={(e) => handlePlayToggle(e, audio.id)}>
@@ -267,10 +258,13 @@ const ResultPage = () => {
               </div>
             ))}
           </div>
-          <div className="left-action-buttons">
-            <button className="btn-delete" onClick={handleDelete}>삭제하기</button>
-            <button className="btn-analyze">분석하기</button>
-          </div>
+          
+          {/* ✨ PC 회원: 분석하기 버튼 삭제, 삭제하기 버튼만 표시 / 비회원: 아예 안 보임 */}
+          {isLoggedIn && (
+            <div className="left-action-buttons">
+              <button className="btn-delete" onClick={handleDelete}>삭제하기</button>
+            </div>
+          )}
         </div>
 
         <div className="result-right-panel">
