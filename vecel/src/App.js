@@ -8,20 +8,23 @@ import KakaoCallback from './components/front/KakaoCallback.js';
 import MyPage from './components/front/MyPage.js';
 import UploadPage from './components/front/UploadPage.js';
 import Dashboard from './components/front/Dashboard.js';
-import AdminLogs from './components/front/AdminLogs.js'
-import AdminUsers from './components/front/AdminUser.js'
+import AdminLogs from './components/front/AdminLogs.js';
+import AdminUsers from './components/front/AdminUser.js';
 import ResultPage from './components/front/ResultPage.js';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     const savedLoginStatus = sessionStorage.getItem('isLoggedIn');
+    const savedAdminStatus = sessionStorage.getItem('isAdmin');
     const savedUserInfo = sessionStorage.getItem('userInfo');
 
     if (savedLoginStatus === 'true' && savedUserInfo) {
       setIsLoggedIn(true);
+      setIsAdmin(savedAdminStatus === 'true');
       setUserInfo(JSON.parse(savedUserInfo));
     }
   }, []);
@@ -29,10 +32,24 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <Header 
+          isLoggedIn={isLoggedIn} 
+          setIsLoggedIn={setIsLoggedIn} 
+          isAdmin={isAdmin} 
+          setIsAdmin={setIsAdmin} 
+        />
         <Routes>
           <Route path="/" element={<MainSection isLoggedIn={isLoggedIn} />} />
-          <Route path="/auth/kakao/callback" element={<KakaoCallback setIsLoggedIn={setIsLoggedIn} setUserInfo={setUserInfo} />} />
+          <Route 
+            path="/auth/kakao/callback" 
+            element={
+              <KakaoCallback 
+                setIsLoggedIn={setIsLoggedIn} 
+                setUserInfo={setUserInfo} 
+                setIsAdmin={setIsAdmin} 
+              />
+            } 
+          />
           <Route path="/profile" element={<MyPage userInfo={userInfo} setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
