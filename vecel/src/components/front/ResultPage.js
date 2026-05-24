@@ -23,7 +23,7 @@ const ResultPage = () => {
 
   useEffect(() => {
     // 결과 페이지에 진입하면 무조건 뜨는 기본 확인 로그
-    console.log("🚀 [ResultPage] 업데이트 ver.6 적용 완료! 결과 화면에 정상 진입했습니다.");
+    console.log("🚀 [ResultPage] 업데이트 ver.7 적용 완료! 결과 화면에 정상 진입했습니다.");
 
     // 만약 업로드 페이지에서 분석이 완료되어 넘어온 경우라면 데이터 분실 여부까지 검사
     if (uploadedId) {
@@ -69,6 +69,47 @@ const ResultPage = () => {
       });
     }
   }, [uploadedId, location.state]);
+
+  useEffect(() => {
+    const fetchMyAudioList = async () => {
+      // 1. 지갑(sessionStorage)에서 로그인 신분증 꺼내기
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) return; // 비회원이면 조용히 종료 (아무것도 안 함)
+
+      try {
+        // 2. 백엔드에 내 파일 목록 1페이지(최대 20개) 요청하기
+        const res = await fetch('https://voiceandtext.duckdns.org/api/v1/files?page=0&size=20', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}` // "나 로그인한 회원이야!" 증명
+          }
+        });
+
+        if (res.ok) {
+          const resData = await res.json();
+          
+          // 3. 백엔드가 준 데이터를 우리 프론트엔드 리스트 모양에 맞게 변환
+          const fetchedFiles = resData.data.content.map(file => ({
+            id: file.analysisRequestId,
+            name: file.originalFileName,
+            duration: formatTime(file.durationSeconds), // 💡 만들어둔 마법의 함수 재사용!
+            audioUrl: null // ⚠️ 이전 파일들은 아직 15분짜리 재생 링크가 없으므로 비워둡니다.
+          }));
+
+          // 4. 기존 리스트(방금 올린 파일)와 겹치지 않게 안전하게 합치기
+          setAudioList(prevList => {
+            const prevIds = prevList.map(a => a.id);
+            const newFiles = fetchedFiles.filter(f => !prevIds.includes(f.id));
+            return [...prevList, ...newFiles]; // 최신 파일이 위로 오도록 배열 합치기
+          });
+        }
+      } catch (error) {
+        console.error("파일 목록 불러오기 에러:", error);
+      }
+    };
+
+    fetchMyAudioList();
+  }, []); // 빈 배열([])을 넣어서 페이지가 처음 켜질 때 딱 한 번만 실행!
 
   useEffect(() => {
     if (audioRef.current) {
