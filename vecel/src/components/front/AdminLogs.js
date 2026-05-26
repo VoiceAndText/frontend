@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import '../css/AdminLogs.css';
 import { fetchWithAuth } from './api';
 
@@ -14,6 +14,7 @@ const AdminLogs = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [filterStatus, setFilterStatus] = useState('ALL');
   const size = 20;
 
   const fetchLogs = async (pageNumber) => {
@@ -58,23 +59,73 @@ const AdminLogs = () => {
     if (page < totalPages - 1) setPage(page + 1);
   };
 
+  const logStats = useMemo(() => {
+    const total = logs.length;
+    const success = logs.filter(l => l.status === 'SUCCESS').length;
+    const failed = logs.filter(l => l.status === 'FAILED' || l.errorMessage).length;
+    const pending = logs.filter(l => l.status === 'PENDING').length;
+    return { total, success, failed, pending };
+  }, [logs]);
+
+  const filteredLogs = useMemo(() => {
+    if (filterStatus === 'ALL') return logs;
+    return logs.filter(log => log.status === filterStatus);
+  }, [logs, filterStatus]);
+
   if (loading) {
-    return <div className="admin-logs-wrapper"><div style={{ color: '#fff', padding: '20px' }}>Loading System Logs...</div></div>;
+    return <div className="admin-logs-wrapper" style={{ color: '#1a202c' }}>Loading System Logs...</div>;
   }
 
   return (
     <div className="admin-logs-wrapper">
-      <div className="admin-logs-container" style={{ display: 'block' }}>
+      <div className="admin-logs-container">
         
-        <div className="log-monitor-section" style={{ width: '100%' }}>
+        <div className="log-dashboard-header">
+          <h2>System Log Center</h2>
+        </div>
+
+        <div className="log-summary-cards">
+          <div className="summary-card">
+            <div className="summary-card-label">Current Page Logs</div>
+            <div className="summary-card-value">{logStats.total}건</div>
+          </div>
+          <div className="summary-card">
+            <div className="summary-card-label">Success Rate</div>
+            <div className="summary-card-value" style={{ color: '#48bb78' }}>
+              {logStats.total > 0 ? ((logStats.success / logStats.total) * 100).toFixed(1) : 0}%
+            </div>
+          </div>
+          <div className="summary-card">
+            <div className="summary-card-label">Failed Logs</div>
+            <div className="summary-card-value" style={{ color: '#e53e3e' }}>{logStats.failed}건</div>
+          </div>
+          <div className="summary-card">
+            <div className="summary-card-label">Pending Logs</div>
+            <div className="summary-card-value" style={{ color: '#ecc94b' }}>{logStats.pending}건</div>
+          </div>
+        </div>
+
+        <div className="log-monitor-section">
           <div className="section-header">
             <h3>System Analysis Logs</h3>
-            <span className="live-indicator">LIVE</span>
+            <div className="header-controls">
+              <select 
+                className="log-filter-select" 
+                value={filterStatus} 
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="ALL">모든 로그 항목</option>
+                <option value="SUCCESS">SUCCESS</option>
+                <option value="FAILED">FAILED</option>
+                <option value="PENDING">PENDING</option>
+              </select>
+              <span className="live-indicator">LIVE</span>
+            </div>
           </div>
           
           <div className="log-screen">
             <div className="log-content">
-              {logs.map((log) => {
+              {filteredLogs.map((log) => {
                 const config = LOG_TYPE_CONFIG[log.status] || LOG_TYPE_CONFIG.Default;
                 
                 const dateText = log.createdAt ? (() => {
@@ -84,9 +135,9 @@ const AdminLogs = () => {
                 
                 return (
                   <div key={log.analysisRequestId} className="log-line">
-                    <div>
+                    <div className="log-meta">
                       <span className="log-time">[{dateText}]</span>
-                      <span className="log-type" style={{ color: config.color, marginLeft: '6px' }}>
+                      <span className="log-type" style={{ color: config.color }}>
                         [{config.label}]
                       </span>
                     </div>
@@ -97,13 +148,13 @@ const AdminLogs = () => {
                   </div>
                 );
               })}
-              {logs.length === 0 && (
-                <div className="log-line" style={{ color: '#718096' }}>No logs found.</div>
+              {filteredLogs.length === 0 && (
+                <div className="log-line" style={{ color: '#718096', border: 'none' }}>No logs found.</div>
               )}
             </div>
           </div>
 
-          <div className="log-pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '15px', gap: '10px' }}>
+          <div className="log-pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
             <button 
               onClick={handlePrevPage} 
               disabled={page === 0}
@@ -111,7 +162,7 @@ const AdminLogs = () => {
             >
               이전
             </button>
-            <span style={{ color: '#fff' }}>{page + 1} / {totalPages || 1}</span>
+            <span style={{ color: '#fff', fontSize: '13px' }}>{page + 1} / {totalPages || 1}</span>
             <button 
               onClick={handleNextPage} 
               disabled={page >= totalPages - 1}
