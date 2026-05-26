@@ -1,9 +1,7 @@
-/* AdminLogs.css */
-
 .admin-logs-wrapper {
   padding: 50px 20px;
   background-color: #ffffff;
-  min-height: calc(100vh - 140px); /* 헤더/푸터 제외한 영역 확보 */
+  min-height: calc(100vh - 140px);
   display: flex;
   justify-content: center;
 }
@@ -15,7 +13,6 @@
   max-width: 1300px;
 }
 
-/* --- 왼쪽: 로그 섹션 --- */
 .log-monitor-section {
   flex: 2.2;
   display: flex;
@@ -51,7 +48,7 @@
 }
 
 .log-screen {
-  background-color: #1a202c; /* 다크 테마 터미널 배경 */
+  background-color: #1a202c;
   border-radius: 12px;
   padding: 25px;
   height: 600px;
@@ -76,7 +73,6 @@
 .log-type { font-weight: 600; min-width: 90px; }
 .log-msg { color: #e2e8f0; word-break: break-all; }
 
-/* --- 오른쪽: 유저 섹션 --- */
 .user-status-section {
   flex: 0.8;
   display: flex;
@@ -167,7 +163,6 @@
   margin-top: 2px;
 }
 
-/* 상태 표시등 애니메이션 효과 */
 .status-indicator-dot {
   width: 14px;
   height: 14px;
@@ -184,7 +179,6 @@
   box-shadow: 0 0 10px rgba(236, 201, 75, 0.5);
 }
 
-/* 스크롤바 커스텀 */
 .log-screen::-webkit-scrollbar,
 .user-list::-webkit-scrollbar {
   width: 6px;
@@ -194,4 +188,70 @@
 .user-list::-webkit-scrollbar-thumb {
   background-color: #cbd5e0;
   border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .admin-logs-wrapper {
+    padding: 12px 10px;
+    min-height: auto;
+  }
+
+  .admin-logs-container {
+    gap: 0;
+  }
+
+  .section-header {
+    margin-bottom: 8px;
+  }
+
+  .section-header h3 {
+    font-size: 1rem;
+  }
+
+  .live-indicator {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .log-screen {
+    padding: 12px;
+    height: calc(100vh - 150px);
+    border-radius: 8px;
+  }
+
+  .log-line {
+    margin-bottom: 6px;
+    font-size: 11px;
+    gap: 4px;
+    flex-direction: column;
+  }
+
+  .log-time {
+    min-width: auto;
+    font-size: 10px;
+  }
+
+  .log-type {
+    min-width: auto;
+    display: inline-block;
+  }
+
+  .log-msg {
+    display: block;
+    margin-top: 2px;
+  }
+
+  .log-pagination {
+    margin-top: 10px !important;
+    gap: 6px !important;
+  }
+
+  .log-pagination button {
+    padding: 4px 10px !important;
+    font-size: 12px;
+  }
+
+  .log-pagination span {
+    font-size: 12px;
+  }
 }
