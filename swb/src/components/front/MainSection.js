@@ -34,7 +34,7 @@ const MainSection = ({ isLoggedIn }) => {
           </p>
           <div className="button-group">
             <button className="btn-primary" onClick={handlePrimaryAction}>
-              {isLoggedIn ? '지금 분석하기' : '카카오 시작하기 →'}
+              {isLoggedIn ? '지금 분석하기 →' : '카카오 시작하기 →'}
             </button>
             {!isLoggedIn && (
               <button className="btn-secondary" onClick={handleGuestAction}>
