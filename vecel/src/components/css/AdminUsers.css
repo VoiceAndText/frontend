@@ -7,95 +7,124 @@ body {
 .admin-users-wrapper {
   padding: 20px;
   background-color: #ffffff;
-  min-height: 100vh;
+  min-height: calc(100vh - 140px);
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
 }
 
 .admin-users-container {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1.4fr 1.1fr;
+  gap: 25px;
+  width: 100%;
   max-width: 1300px;
   margin: 0 auto;
 }
 
-.accounts-card, .user-detail-log-section {
-  background: #2d3748;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #4a5568;
+.accounts-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  max-height: 750px;
+}
+
+.user-detail-log-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  max-height: 750px;
 }
 
 .card-header, .log-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
-.card-header h3, .log-header h3 {
+.card-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.log-header h3 {
   margin: 0;
   font-size: 18px;
-  color: #fff;
+  font-weight: 700;
+  color: #1a202c;
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  background: #1a202c;
-  border: 1px solid #4a5568;
-  border-radius: 6px;
-  padding: 4px 8px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 6px 14px;
 }
 
 .search-icon {
-  margin-right: 6px;
-  font-size: 14px;
+  margin-right: 8px;
+  font-size: 13px;
+  color: #a0aec0;
 }
 
 .search-bar input {
   background: transparent;
   border: none;
-  color: #fff;
+  color: #1a202c;
   outline: none;
   font-size: 13px;
+  width: 160px;
 }
 
 .table-header {
   display: flex;
   padding: 10px;
-  background: #1a202c;
-  border-radius: 6px;
+  border-bottom: 1px solid #edf2f7;
   font-size: 13px;
   color: #a0aec0;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
 .col-name { flex: 1.5; }
-.col-setting { flex: 1.5; text-align: center; }
+.col-setting { flex: 1.2; text-align: center; }
 .col-log { flex: 0.8; text-align: right; }
 
 .user-list-rows {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 600px;
   overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
 .user-row {
   display: flex;
   align-items: center;
-  padding: 12px 10px;
-  background: #1a202c;
+  padding: 14px 10px;
+  background: #ffffff;
   border-radius: 8px;
   border: 1px solid transparent;
 }
 
 .user-row.selected {
-  border-color: #3182ce;
-  background: #232d3f;
+  background: #f0f4f8;
 }
 
 .user-profile-col {
@@ -105,20 +134,21 @@ body {
 }
 
 .row-avatar-fallback {
-  width: 32px;
-  height: 32px;
-  background: #4a5568;
+  width: 36px;
+  height: 36px;
+  background: #edf2f7;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: #fff;
+  font-weight: 700;
+  color: #4a5568;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .setting-col {
-  flex: 1.5;
+  flex: 1.2;
   text-align: center;
 }
 
@@ -128,42 +158,65 @@ body {
 }
 
 .view-log-btn {
-  background: #3182ce;
-  color: #fff;
-  border: none;
+  background: #ffffff;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.view-log-btn:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
 }
 
 .selected-user-name {
-  color: #63b3ed;
+  color: #3182ce;
+  margin-left: 4px;
 }
 
 .black-log-screen {
-  background: #111625;
-  border-radius: 8px;
-  padding: 15px;
-  height: 540px;
+  background: #000000;
+  border-radius: 12px;
+  padding: 20px;
   overflow-y: auto;
+  flex: 1;
   border: 1px solid #1a202c;
 }
 
 .terminal-content {
-  font-family: 'Fira Code', monospace;
+  font-family: 'Fira Code', 'Courier New', monospace;
   font-size: 12px;
   line-height: 1.6;
 }
 
 .terminal-line {
-  margin-bottom: 8px;
-  word-break: break-all;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
 }
 
-.t-time { color: #718096; margin-right: 6px; }
-.t-type { font-weight: bold; margin-right: 6px; }
-.t-msg { color: #e2e8f0; }
+.t-time {
+  color: #4a5568;
+  min-width: 95px;
+  flex-shrink: 0;
+}
+
+.t-type {
+  font-weight: bold;
+  min-width: 75px;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.t-msg {
+  color: #e2e8f0;
+  word-break: break-all;
+}
 
 .back-btn {
   display: none;
@@ -171,20 +224,30 @@ body {
   color: #fff;
   border: none;
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
 }
 
 .user-list-rows::-webkit-scrollbar,
 .black-log-screen::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 
 .user-list-rows::-webkit-scrollbar-thumb,
 .black-log-screen::-webkit-scrollbar-thumb {
-  background-color: #4a5568;
+  background-color: #cbd5e0;
   border-radius: 10px;
+}
+
+@media (max-width: 992px) {
+  .admin-users-container {
+    grid-template-columns: 1.2fr 1fr;
+    gap: 15px;
+  }
+  .search-bar input {
+    width: 110px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -198,7 +261,8 @@ body {
   }
 
   .accounts-card, .user-detail-log-section {
-    padding: 12px;
+    padding: 15px;
+    max-height: calc(100vh - 40px);
   }
 
   .admin-users-container.show-logs .accounts-card {
@@ -212,7 +276,7 @@ body {
   .card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
   }
 
   .search-bar {
@@ -231,30 +295,20 @@ body {
   .user-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
-    padding: 12px;
+    gap: 12px;
+    padding: 15px 10px;
+    border-bottom: 1px solid #edf2f7;
   }
 
-  .user-profile-col {
-    width: 100%;
-  }
-
-  .setting-col {
+  .user-profile-col, .setting-col, .log-col {
     width: 100%;
     text-align: left;
   }
 
-  .setting-col button {
-    width: 100%;
-  }
-
-  .log-col {
-    width: 100%;
-  }
-
-  .view-log-btn {
+  .setting-col button, .view-log-btn {
     width: 100%;
     padding: 8px;
+    box-sizing: border-box;
   }
 
   .back-btn {
@@ -262,10 +316,23 @@ body {
   }
 
   .black-log-screen {
-    height: calc(100vh - 140px);
+    height: calc(100vh - 160px);
   }
 
   .terminal-line {
     font-size: 11px;
+    flex-direction: column;
+    gap: 2px;
+    border-bottom: 1px solid #1a202c;
+    padding-bottom: 6px;
+  }
+  
+  .t-time {
+    min-width: auto;
+  }
+  
+  .t-type {
+    min-width: auto;
+    margin-right: 0;
   }
 }
