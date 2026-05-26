@@ -152,25 +152,27 @@ const AdminUsers = () => {
                   <div className="row-avatar-fallback">
                     {user.name ? user.name.charAt(0) : 'U'}
                   </div>
-                  <div className="user-meta-info" style={{ display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
-                    <span className="user-handle" style={{ fontWeight: 'bold' }}>{user.name || '이름 없음'}</span>
-                    <span className="user-email-sub" style={{ fontSize: '11px', color: '#a0aec0' }}>{user.email || '이메일 없음'}</span>
+                  <div className="user-meta-info" style={{ display: 'flex', flexDirection: 'column', marginLeft: '12px' }}>
+                    <span className="user-handle" style={{ fontWeight: '600', color: '#1a202c', fontSize: '15px' }}>{user.name || '이름 없음'}</span>
+                    <span className="user-email-sub" style={{ fontSize: '12px', color: '#718096', marginTop: '2px' }}>{user.email || '이메일 없음'}</span>
                   </div>
                 </div>
                 
                 <div className="setting-col">
                   {user.status === 'INACTIVE' ? (
-                    <span style={{ color: '#e53e3e', fontSize: '13px', fontWeight: 'bold' }}>탈퇴 회원 (INACTIVE)</span>
+                    <span style={{ color: '#e53e3e', fontSize: '13px', fontWeight: '600' }}>탈퇴 회원 (INACTIVE)</span>
                   ) : (
                     <button 
                       className={`status-btn ${user.status ? user.status.toLowerCase() : 'active'}`} 
                       onClick={() => handleToggleStatus(user)}
                       style={{
                         padding: '6px 12px',
-                        backgroundColor: user.status === 'ACTIVE' ? '#2d3748' : '#e53e3e',
+                        backgroundColor: user.status === 'ACTIVE' ? '#1a202c' : '#e53e3e',
                         color: '#fff',
-                        border: '1px solid #4a5568',
-                        borderRadius: '4px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        fontWeight: '600',
                         cursor: 'pointer'
                       }}
                     >
@@ -192,7 +194,7 @@ const AdminUsers = () => {
 
         <div className="user-detail-log-section">
           <div className="log-header">
-            <h3>Recent Logs: <span className="selected-user-name">{selectedUser ? selectedUser.name : '선택 없음'}</span></h3>
+            <h3>Recent Logs:<span className="selected-user-name">{selectedUser ? selectedUser.name : '선택 없음'}</span></h3>
             <button className="back-btn" onClick={() => setViewMode("users")}>돌아가기</button>
           </div>
           <div className="black-log-screen">
@@ -201,11 +203,24 @@ const AdminUsers = () => {
                 <div className="terminal-line"><span className="t-msg" style={{ color: '#a0aec0' }}>Fetching logs from server...</span></div>
               ) : userLogs.length > 0 ? (
                 userLogs.map((log) => {
-                  const config = LOG_TYPE_CONFIG[log.status] || LOG_TYPE_CONFIG.Default;
+                  let currentStatus = log.status;
+                  if ((log.status === 'SYSTEM' || !log.status) && log.errorMessage) {
+                    currentStatus = 'FAILED';
+                  } else if (log.status === 'SYSTEM' && !log.errorMessage) {
+                    currentStatus = 'SUCCESS';
+                  }
+
+                  const config = LOG_TYPE_CONFIG[currentStatus] || LOG_TYPE_CONFIG.Default;
                   
                   const logTime = log.createdAt ? (() => {
                     const utcDate = log.createdAt.endsWith('Z') ? log.createdAt : `${log.createdAt}Z`;
-                    return new Date(utcDate).toLocaleTimeString('ko-KR');
+                    const dateObj = new Date(utcDate);
+                    const ampm = dateObj.getHours() >= 12 ? '오후' : '오전';
+                    let hours = dateObj.getHours() % 12;
+                    hours = hours ? hours : 12;
+                    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+                    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+                    return `${ampm} ${hours}:${minutes}:${seconds}`;
                   })() : '00:00:00';
                   
                   return (
@@ -215,8 +230,8 @@ const AdminUsers = () => {
                         [{config.label}]
                       </span>
                       <span className="t-msg">
-                        Request #{log.analysisRequestId} [{log.sourceType}] 
-                        {log.errorMessage ? ` - Error: ${log.errorMessage}` : ' - Processed successfully.'}
+                        Request #{log.analysisRequestId} [{log.sourceType || 'UPLOAD'}] - 
+                        {log.errorMessage ? `Error: ${log.errorMessage}` : 'Processed successfully.'}
                       </span>
                     </div>
                   );
