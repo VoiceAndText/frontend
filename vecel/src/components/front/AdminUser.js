@@ -118,7 +118,7 @@ const AdminUsers = () => {
   };
 
   if (loading) {
-    return <div className="admin-users-wrapper"><div style={{ color: '#fff', padding: '20px' }}>Loading Admin User Management...</div></div>;
+    return <div className="admin-users-wrapper"><div style={{ color: '#1a202c', padding: '20px' }}>Loading Admin User Management...</div></div>;
   }
 
   return (
