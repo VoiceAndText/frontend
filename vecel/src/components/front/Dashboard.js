@@ -58,7 +58,7 @@ const Dashboard = () => {
   }, [users, logs]);
 
   if (loading) {
-    return <div className="dashboard-wrapper" style={{ color: '#fff' }}>Loading Admin Dashboard Metrics...</div>;
+    return <div className="dashboard-wrapper" style={{ color: '#1a202c' }}>Loading Admin Dashboard Metrics...</div>;
   }
 
   return (
