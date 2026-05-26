@@ -114,7 +114,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="detail-block">
+          <div className="detail-block failures-section">
             <h3 style={{ color: '#f56565' }}>Critical System Failures</h3>
             <div className="error-list">
               {metrics.recentErrors.map((err) => {
