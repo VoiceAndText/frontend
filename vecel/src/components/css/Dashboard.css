@@ -1,86 +1,105 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+
 .dashboard-wrapper {
-  padding: 40px 20px;
-  background-color: #1a202c;
+  padding: 20px;
+  background-color: #ffffff;
   min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .dashboard-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  color: #fff;
-  margin-bottom: 20px;
+  color: #1a202c;
+  margin-top: 0;
+  margin-bottom: 15px;
 }
 
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .metric-card {
   background: #2d3748;
-  padding: 20px;
+  padding: 15px;
   border-radius: 8px;
   border: 1px solid #4a5568;
 }
 
 .metric-label {
-  font-size: 14px;
+  font-size: 13px;
   color: #a0aec0;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .metric-number {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .details-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
+  gap: 15px;
+  flex: 1;
+  min-height: 0;
 }
 
 .detail-block {
   background: #2d3748;
-  padding: 20px;
+  padding: 15px;
   border-radius: 8px;
   border: 1px solid #4a5568;
-  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .detail-block h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   margin-top: 0;
 }
 
 .source-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 25px;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
 .source-item-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
-  font-size: 14px;
+  margin-bottom: 4px;
+  font-size: 13px;
 }
 
 .progress-bar-bg {
   background: #4a5568;
-  height: 12px;
+  height: 10px;
   border-radius: 6px;
   overflow: hidden;
 }
@@ -94,15 +113,18 @@
 .error-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
 .error-item {
   background: #1a202c;
-  padding: 12px;
+  padding: 10px;
   border-radius: 6px;
   border-left: 4px solid #e53e3e;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .error-item-header {
@@ -115,7 +137,18 @@
 .empty-text {
   text-align: center;
   color: #a0aec0;
-  padding-top: 40px;
+  padding-top: 30px;
+}
+
+.source-list::-webkit-scrollbar,
+.error-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.source-list::-webkit-scrollbar-thumb,
+.error-list::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+  border-radius: 10px;
 }
 
 @media (max-width: 1024px) {
@@ -126,18 +159,20 @@
 
 @media (max-width: 768px) {
   .dashboard-wrapper {
-    padding: 12px 10px;
+    padding: 10px;
+    height: 100vh;
+    overflow: hidden;
   }
 
   .dashboard-title {
     font-size: 18px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .metric-card {
@@ -156,11 +191,13 @@
   .details-section {
     grid-template-columns: 1fr;
     gap: 10px;
+    height: calc(100vh - 170px);
   }
 
   .detail-block {
     padding: 12px;
-    min-height: auto;
+    height: 100%;
+    min-height: 0;
   }
 
   .detail-block h3 {
@@ -170,12 +207,10 @@
 
   .source-list {
     gap: 8px;
-    margin-top: 10px;
   }
 
   .source-item-header {
     font-size: 11px;
-    margin-bottom: 2px;
   }
 
   .progress-bar-bg {
@@ -191,12 +226,8 @@
     font-size: 11px;
   }
 
-  .error-item-header {
-    margin-bottom: 2px;
-  }
-
   .empty-text {
     padding-top: 15px;
-    font-size: 12px;
+    font-size: 11px;
   }
 }
