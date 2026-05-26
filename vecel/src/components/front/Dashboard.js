@@ -144,6 +144,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <footer className="dashboard-footer">
+        © 2026 Admin Dashboard. All rights reserved.
+      </footer>
     </div>
   );
 };
