@@ -16,6 +16,7 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [logLoading, setLogLoading] = useState(false);
+  const [viewMode, setViewMode] = useState("users");
 
   const fetchUserLogs = useCallback(async (userId) => {
     setLogLoading(true);
@@ -113,6 +114,7 @@ const AdminUsers = () => {
   const handleUserSelect = (user) => {
     setSelectedUser(user);
     fetchUserLogs(user.userId);
+    setViewMode("logs");
   };
 
   if (loading) {
@@ -121,7 +123,7 @@ const AdminUsers = () => {
 
   return (
     <div className="admin-users-wrapper">
-      <div className="admin-users-container">
+      <div className={`admin-users-container ${viewMode === 'users' ? 'show-users' : 'show-logs'}`}>
         
         <div className="accounts-card">
           <div className="card-header">
@@ -191,6 +193,7 @@ const AdminUsers = () => {
         <div className="user-detail-log-section">
           <div className="log-header">
             <h3>Recent Logs: <span className="selected-user-name">{selectedUser ? selectedUser.name : '선택 없음'}</span></h3>
+            <button className="back-btn" onClick={() => setViewMode("users")}>돌아가기</button>
           </div>
           <div className="black-log-screen">
             <div className="terminal-content">
