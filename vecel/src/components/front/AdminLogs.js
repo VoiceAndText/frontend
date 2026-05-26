@@ -79,15 +79,17 @@ const AdminLogs = () => {
                 
                 const dateText = log.createdAt ? (() => {
                   const utcDate = log.createdAt.endsWith('Z') ? log.createdAt : `${log.createdAt}Z`;
-                  return new Date(utcDate).toLocaleString('ko-KR');
+                  return new Date(utcDate).toLocaleTimeString('ko-KR');
                 })() : 'UNKNOWN TIME';
                 
                 return (
                   <div key={log.analysisRequestId} className="log-line">
-                    <span className="log-time">[{dateText}]</span>
-                    <span className="log-type" style={{ color: config.color }}>
-                      [{config.label}]
-                    </span>
+                    <div>
+                      <span className="log-time">[{dateText}]</span>
+                      <span className="log-type" style={{ color: config.color, marginLeft: '6px' }}>
+                        [{config.label}]
+                      </span>
+                    </div>
                     <span className="log-msg">
                       [User ID: {log.userId}] [{log.sourceType}] 
                       {log.errorMessage ? ` Error: ${log.errorMessage}` : ' Analysis requested successfully.'}
