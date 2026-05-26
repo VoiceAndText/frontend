@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from './api';
-import '../css/Dashboard.css';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -144,9 +144,6 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <footer className="dashboard-footer">
-        © 2026 Admin Dashboard. All rights reserved.
-      </footer>
     </div>
   );
 };
