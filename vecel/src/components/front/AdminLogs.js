@@ -61,14 +61,16 @@ const AdminLogs = () => {
 
   const logStats = useMemo(() => {
     const total = logs.length;
-    const success = logs.filter(l => l.status === 'SUCCESS').length;
     const failed = logs.filter(l => l.status === 'FAILED' || l.errorMessage).length;
     const pending = logs.filter(l => l.status === 'PENDING').length;
+    const success = total - failed - pending;
     return { total, success, failed, pending };
   }, [logs]);
 
   const filteredLogs = useMemo(() => {
     if (filterStatus === 'ALL') return logs;
+    if (filterStatus === 'FAILED') return logs.filter(l => l.status === 'FAILED' || l.errorMessage);
+    if (filterStatus === 'SUCCESS') return logs.filter(l => l.status !== 'FAILED' && !l.errorMessage && l.status !== 'PENDING');
     return logs.filter(log => log.status === filterStatus);
   }, [logs, filterStatus]);
 
@@ -90,10 +92,8 @@ const AdminLogs = () => {
             <div className="summary-card-value">{logStats.total}건</div>
           </div>
           <div className="summary-card">
-            <div className="summary-card-label">Success Rate</div>
-            <div className="summary-card-value" style={{ color: '#48bb78' }}>
-              {logStats.total > 0 ? ((logStats.success / logStats.total) * 100).toFixed(1) : 0}%
-            </div>
+            <div className="summary-card-label">Success Logs</div>
+            <div className="summary-card-value" style={{ color: '#48bb78' }}>{logStats.success}건</div>
           </div>
           <div className="summary-card">
             <div className="summary-card-label">Failed Logs</div>
@@ -126,7 +126,14 @@ const AdminLogs = () => {
           <div className="log-screen">
             <div className="log-content">
               {filteredLogs.map((log) => {
-                const config = LOG_TYPE_CONFIG[log.status] || LOG_TYPE_CONFIG.Default;
+                let currentStatus = log.status;
+                if ((log.status === 'SYSTEM' || !log.status) && log.errorMessage) {
+                  currentStatus = 'FAILED';
+                } else if (log.status === 'SYSTEM' && !log.errorMessage) {
+                  currentStatus = 'SUCCESS';
+                }
+                
+                const config = LOG_TYPE_CONFIG[currentStatus] || LOG_TYPE_CONFIG.Default;
                 
                 const dateText = log.createdAt ? (() => {
                   const utcDate = log.createdAt.endsWith('Z') ? log.createdAt : `${log.createdAt}Z`;
@@ -142,7 +149,7 @@ const AdminLogs = () => {
                       </span>
                     </div>
                     <span className="log-msg">
-                      [User ID: {log.userId}] [{log.sourceType}] 
+                      [User ID: {log.userId || 'N/A'}] [{log.sourceType || 'UNKNOWN'}] 
                       {log.errorMessage ? ` Error: ${log.errorMessage}` : ' Analysis requested successfully.'}
                     </span>
                   </div>
@@ -154,11 +161,11 @@ const AdminLogs = () => {
             </div>
           </div>
 
-          <div className="log-pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+          <div className="log-pagination">
             <button 
               onClick={handlePrevPage} 
               disabled={page === 0}
-              style={{ padding: '6px 12px', cursor: page === 0 ? 'not-allowed' : 'pointer', opacity: page === 0 ? 0.5 : 1 }}
+              style={{ cursor: page === 0 ? 'not-allowed' : 'pointer', opacity: page === 0 ? 0.5 : 1 }}
             >
               이전
             </button>
@@ -166,13 +173,17 @@ const AdminLogs = () => {
             <button 
               onClick={handleNextPage} 
               disabled={page >= totalPages - 1}
-              style={{ padding: '6px 12px', cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer', opacity: page >= totalPages - 1 ? 0.5 : 1 }}
+              style={{ cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer', opacity: page >= totalPages - 1 ? 0.5 : 1 }}
             >
               다음
             </button>
           </div>
 
         </div>
+
+        <footer className="log-dashboard-footer">
+          © 2026 Admin Dashboard. All rights reserved.
+        </footer>
 
       </div>
     </div>
