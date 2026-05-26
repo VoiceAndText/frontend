@@ -126,61 +126,77 @@
 
 @media (max-width: 768px) {
   .dashboard-wrapper {
-    padding: 15px 10px;
+    padding: 12px 10px;
   }
 
   .dashboard-title {
-    font-size: 20px;
-    margin-bottom: 15px;
+    font-size: 18px;
+    margin-bottom: 12px;
   }
   
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
   .metric-card {
-    padding: 12px;
+    padding: 10px;
   }
 
   .metric-label {
     font-size: 11px;
+    margin-bottom: 2px;
   }
   
   .metric-number {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .details-section {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 10px;
   }
 
   .detail-block {
-    padding: 15px;
+    padding: 12px;
     min-height: auto;
   }
 
   .detail-block h3 {
-    font-size: 15px;
-    margin-bottom: 10px;
+    font-size: 14px;
+    margin-bottom: 8px;
   }
 
   .source-list {
-    gap: 10px;
-    margin-top: 15px;
+    gap: 8px;
+    margin-top: 10px;
   }
 
   .source-item-header {
-    font-size: 12px;
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 
   .progress-bar-bg {
-    height: 8px;
+    height: 6px;
   }
 
-  .detail-block.failures-section {
-    display: none;
+  .error-list {
+    gap: 6px;
+  }
+
+  .error-item {
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .error-item-header {
+    margin-bottom: 2px;
+  }
+
+  .empty-text {
+    padding-top: 15px;
+    font-size: 12px;
   }
 }
