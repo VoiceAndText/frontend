@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from './api';
-import './Dashboard.css';
+import '../css/Dashboard.css';
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
