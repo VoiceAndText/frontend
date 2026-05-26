@@ -2,17 +2,15 @@ body {
   margin: 0;
   padding: 0;
   background-color: #ffffff;
-  overflow: hidden;
 }
 
 .dashboard-wrapper {
-  padding: 15px 20px;
+  padding: 20px;
   background-color: #ffffff;
-  height: 100vh;
+  min-height: 100vh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .dashboard-container {
@@ -23,77 +21,70 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0;
 }
 
 .dashboard-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #1a202c;
   margin-top: 0;
-  margin-bottom: 12px;
-  flex-shrink: 0;
+  margin-bottom: 15px;
 }
 
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-shrink: 0;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .metric-card {
   background: #2d3748;
-  padding: 12px;
+  padding: 15px;
   border-radius: 8px;
   border: 1px solid #4a5568;
 }
 
 .metric-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #a0aec0;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .metric-number {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .details-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 15px;
   flex: 1;
   min-height: 0;
-  margin-bottom: 10px;
 }
 
 .detail-block {
   background: #2d3748;
-  padding: 12px;
+  padding: 15px;
   border-radius: 8px;
   border: 1px solid #4a5568;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  height: 100%;
-  box-sizing: border-box;
 }
 
 .detail-block h3 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   margin-top: 0;
-  flex-shrink: 0;
 }
 
 .source-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   overflow-y: auto;
   flex: 1;
   padding-right: 4px;
@@ -102,27 +93,27 @@ body {
 .source-item-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 2px;
-  font-size: 12px;
+  margin-bottom: 4px;
+  font-size: 13px;
 }
 
 .progress-bar-bg {
   background: #4a5568;
-  height: 8px;
-  border-radius: 4px;
+  height: 10px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   background: #3182ce;
   height: 100%;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .error-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   overflow-y: auto;
   flex: 1;
   padding-right: 4px;
@@ -130,36 +121,23 @@ body {
 
 .error-item {
   background: #1a202c;
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   border-left: 4px solid #e53e3e;
-  font-size: 11px;
-  flex-shrink: 0;
+  font-size: 12px;
 }
 
 .error-item-header {
   display: flex;
   justify-content: space-between;
   color: #a0aec0;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .empty-text {
   text-align: center;
   color: #a0aec0;
-  padding-top: 20px;
-  font-size: 12px;
-}
-
-.dashboard-footer {
-  text-align: center;
-  font-size: 12px;
-  color: #718096;
-  padding-top: 5px;
-  border-top: 1px solid #edf2f7;
-  flex-shrink: 0;
-  width: 100%;
-  box-sizing: border-box;
+  padding-top: 30px;
 }
 
 .source-list::-webkit-scrollbar,
@@ -182,70 +160,74 @@ body {
 @media (max-width: 768px) {
   .dashboard-wrapper {
     padding: 10px;
+    height: 100vh;
+    overflow: hidden;
   }
 
   .dashboard-title {
-    font-size: 16px;
-    margin-bottom: 8px;
+    font-size: 18px;
+    margin-bottom: 10px;
   }
   
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 10px;
   }
 
   .metric-card {
-    padding: 8px;
+    padding: 10px;
   }
 
   .metric-label {
-    font-size: 10px;
+    font-size: 11px;
+    margin-bottom: 2px;
   }
   
   .metric-number {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .details-section {
     grid-template-columns: 1fr;
-    gap: 8px;
-    flex: 1;
-    min-height: 0;
+    gap: 10px;
+    height: calc(100vh - 170px);
   }
 
   .detail-block {
-    padding: 10px;
+    padding: 12px;
+    height: 100%;
+    min-height: 0;
   }
 
   .detail-block h3 {
-    font-size: 13px;
-    margin-bottom: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
   }
 
   .source-list {
-    gap: 6px;
+    gap: 8px;
   }
 
   .source-item-header {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .progress-bar-bg {
-    height: 5px;
+    height: 6px;
   }
 
   .error-list {
-    gap: 4px;
+    gap: 6px;
   }
 
   .error-item {
-    padding: 6px;
-    font-size: 10px;
+    padding: 8px;
+    font-size: 11px;
   }
 
-  .dashboard-footer {
-    font-size: 10px;
-    padding-top: 4px;
+  .empty-text {
+    padding-top: 15px;
+    font-size: 11px;
   }
 }
