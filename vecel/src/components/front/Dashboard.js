@@ -114,7 +114,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="detail-block failures-section">
+          <div className="detail-block">
             <h3 style={{ color: '#f56565' }}>Critical System Failures</h3>
             <div className="error-list">
               {metrics.recentErrors.map((err) => {
@@ -136,7 +136,7 @@ const Dashboard = () => {
                 );
               })}
               {metrics.recentErrors.length === 0 && (
-                <div className="empty-text" style={{ color: '#48bb78', fontWeight: 'bold', paddingTop: '50px' }}>
+                <div className="empty-text" style={{ color: '#48bb78', fontWeight: 'bold', paddingTop: '20px' }}>
                   System Healthy. No errors detected.
                 </div>
               )}
