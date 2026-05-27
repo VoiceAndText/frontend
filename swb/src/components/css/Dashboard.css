@@ -1,120 +1,233 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+
 .dashboard-wrapper {
-  padding: 40px;
-  background-color: #fafbfc;
+  padding: 20px;
+  background-color: #ffffff;
   min-height: 100vh;
-  margin-left: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .dashboard-title {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
-  color: #333;
-  margin-bottom: 30px;
+  color: #1a202c;
+  margin-top: 0;
+  margin-bottom: 15px;
 }
 
-/* 상단 요약 카드 영역 */
 .summary-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
-.card {
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+.metric-card {
+  background: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: #a0aec0;
+  margin-bottom: 4px;
+}
+
+.metric-number {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.details-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  flex: 1;
+  min-height: 0;
+}
+
+.detail-block {
+  background: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  min-height: 0;
 }
 
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.card-label {
-  font-size: 14px;
-  color: #888;
-  font-weight: 500;
-  display: block;
+.detail-block h3 {
+  font-size: 16px;
+  font-weight: bold;
   margin-bottom: 10px;
+  margin-top: 0;
 }
 
-.card-number {
-  font-size: 32px;
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-}
-
-.card-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 15px;
+.source-list {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
-.card-bottom {
+.source-item-header {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 4px;
   font-size: 13px;
 }
 
-.trend.up {
-  color: #00C48C;
-  font-weight: 600;
+.progress-bar-bg {
+  background: #4a5568;
+  height: 10px;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.trend-text {
-  color: #aaa;
+.progress-bar-fill {
+  background: #3182ce;
+  height: 100%;
+  border-radius: 6px;
 }
 
-/* 하단 차트 영역 */
-.chart-section {
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+.error-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
-.chart-header {
+.error-item {
+  background: #1a202c;
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 4px solid #e53e3e;
+  font-size: 12px;
+}
+
+.error-item-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+  color: #a0aec0;
+  margin-bottom: 4px;
 }
 
-.chart-header h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
+.empty-text {
+  text-align: center;
+  color: #a0aec0;
+  padding-top: 30px;
 }
 
-.chart-filter {
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid #eee;
-  color: #666;
-  font-size: 12px;
-  outline: none;
-  background-color: #fafafa;
-  cursor: pointer;
+.source-list::-webkit-scrollbar,
+.error-list::-webkit-scrollbar {
+  width: 4px;
 }
 
-.chart-body {
-  width: 100%;
+.source-list::-webkit-scrollbar-thumb,
+.error-list::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+  border-radius: 10px;
+}
+
+@media (max-width: 1024px) {
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    padding: 10px;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .dashboard-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .metric-card {
+    padding: 10px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+  
+  .metric-number {
+    font-size: 16px;
+  }
+
+  .details-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    height: calc(100vh - 170px);
+  }
+
+  .detail-block {
+    padding: 12px;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .detail-block h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .source-list {
+    gap: 8px;
+  }
+
+  .source-item-header {
+    font-size: 11px;
+  }
+
+  .progress-bar-bg {
+    height: 6px;
+  }
+
+  .error-list {
+    gap: 6px;
+  }
+
+  .error-item {
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .empty-text {
+    padding-top: 15px;
+    font-size: 11px;
+  }
 }

@@ -1,46 +1,113 @@
-/* AdminLogs.css */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
 
 .admin-logs-wrapper {
-  padding: 50px 20px;
+  padding: 20px;
   background-color: #ffffff;
-  min-height: calc(100vh - 140px); /* 헤더/푸터 제외한 영역 확보 */
-  display: flex;
-  justify-content: center;
-}
-
-.admin-logs-container {
-  display: flex;
-  gap: 30px;
-  width: 100%;
-  max-width: 1300px;
-}
-
-/* --- 왼쪽: 로그 섹션 --- */
-.log-monitor-section {
-  flex: 2.2;
+  min-height: 100vh;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
 
-.section-header {
+.admin-logs-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.log-dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
 }
 
+.log-dashboard-header h2 {
+  margin: 0;
+  color: #1a202c;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.log-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.summary-card {
+  background: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+  color: #fff;
+}
+
+.summary-card-label {
+  font-size: 12px;
+  color: #a0aec0;
+  margin-bottom: 4px;
+}
+
+.summary-card-value {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.log-monitor-section {
+  background: #2d3748;
+  border-radius: 12px;
+  border: 1px solid #4a5568;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .section-header h3 {
   margin: 0;
-  color: #2d3748;
-  font-size: 1.25rem;
+  color: #fff;
+  font-size: 16px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.log-filter-select {
+  background: #1a202c;
+  color: #fff;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
 }
 
 .live-indicator {
   background-color: #fed7d7;
   color: #e53e3e;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
   letter-spacing: 1px;
   animation: blink 1.5s infinite;
@@ -51,13 +118,12 @@
 }
 
 .log-screen {
-  background-color: #1a202c; /* 다크 테마 터미널 배경 */
-  border-radius: 12px;
-  padding: 25px;
-  height: 600px;
+  background-color: #1a202c;
+  border-radius: 8px;
+  padding: 15px;
+  max-height: 600px;
   overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border: 1px solid #2d3748;
+  border: 1px solid #4a5568;
 }
 
 .log-content {
@@ -65,133 +131,135 @@
 }
 
 .log-line {
-  margin-bottom: 10px;
-  font-size: 13px;
-  line-height: 1.5;
-  display: flex;
-  gap: 12px;
-}
-
-.log-time { color: #718096; min-width: 140px; }
-.log-type { font-weight: 600; min-width: 90px; }
-.log-msg { color: #e2e8f0; word-break: break-all; }
-
-/* --- 오른쪽: 유저 섹션 --- */
-.user-status-section {
-  flex: 0.8;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.user-count-card {
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-  padding: 25px;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.card-label { color: #718096; font-size: 14px; font-weight: 500; }
-.card-number { margin: 12px 0 0 0; font-size: 32px; color: #1a202c; }
-
-.user-list-container {
-  background-color: #f7fafc;
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
-  flex: 1;
-}
-
-.list-header {
-  font-size: 15px;
-  font-weight: 700;
-  color: #4a5568;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.user-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.user-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  padding: 15px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: 1px solid #edf2f7;
-  transition: transform 0.2s ease;
-}
-
-.user-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.user-profile-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-avatar-circle {
-  background-color: #edf2f7;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-detail {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name-text {
-  font-weight: 600;
-  color: #2d3748;
-  font-size: 15px;
-}
-
-.last-action-text {
+  margin-bottom: 8px;
   font-size: 12px;
-  color: #a0aec0;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #2d3748;
+  padding-bottom: 6px;
+}
+
+.log-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.log-time {
+  color: #718096;
+}
+
+.log-type {
+  font-weight: 600;
+}
+
+.log-msg {
+  color: #e2e8f0;
+  word-break: break-all;
   margin-top: 2px;
 }
 
-/* 상태 표시등 애니메이션 효과 */
-.status-indicator-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+.log-pagination {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-.status-indicator-dot.active {
-  background-color: #48bb78;
-  box-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
+.log-pagination button {
+  background: #1a202c;
+  border: 1px solid #4a5568;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
 }
 
-.status-indicator-dot.idle {
-  background-color: #ecc94b;
-  box-shadow: 0 0 10px rgba(236, 201, 75, 0.5);
+.log-pagination button:hover:not(:disabled) {
+  background: #4a5568;
 }
 
-/* 스크롤바 커스텀 */
-.log-screen::-webkit-scrollbar,
-.user-list::-webkit-scrollbar {
-  width: 6px;
+.log-dashboard-footer {
+  text-align: center;
+  font-size: 12px;
+  color: #718096;
+  padding: 15px 0;
+  border-top: 1px solid #edf2f7;
+  margin-top: auto;
 }
 
-.log-screen::-webkit-scrollbar-thumb,
-.user-list::-webkit-scrollbar-thumb {
-  background-color: #cbd5e0;
+.log-screen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.log-screen::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
   border-radius: 10px;
+}
+
+@media (max-width: 1024px) {
+  .log-summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-logs-wrapper {
+    padding: 10px;
+  }
+
+  .log-dashboard-header h2 {
+    font-size: 18px;
+  }
+
+  .log-summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .summary-card {
+    padding: 10px;
+  }
+
+  .summary-card-label {
+    font-size: 11px;
+  }
+
+  .summary-card-value {
+    font-size: 16px;
+  }
+
+  .log-monitor-section {
+    padding: 10px;
+  }
+
+  .section-header h3 {
+    font-size: 14px;
+  }
+
+  .header-controls {
+    gap: 6px;
+  }
+
+  .log-filter-select {
+    padding: 2px 6px;
+    font-size: 11px;
+  }
+
+  .live-indicator {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .log-screen {
+    max-height: 450px;
+  }
+
+  .log-line {
+    font-size: 11px;
+  }
 }
