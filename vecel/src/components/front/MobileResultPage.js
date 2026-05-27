@@ -3,7 +3,7 @@ import TextView from './TextView';
 import AnalysisView from './AnalysisView';
 import '../css/MobileResultPage.css';
 
-const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult }) => {
+const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult, setAnalysisResult }) => {
   const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState(uploadedId ? 'analysis' : 'text');
@@ -35,6 +35,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
       setActiveAudioId(null);
       setIsPlaying(false);
       setViewStep('list'); 
+      if (setAnalysisResult) setAnalysisResult(null); // 삭제 시 이전 결과도 초기화
       
       alert("성공적으로 삭제되었습니다.");
 
@@ -56,6 +57,39 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
 
   const handleCardClick = (id) => {
     setActiveAudioId(id);
+  };
+
+  // ✨ 결과보기 버튼을 눌렀을 때 백엔드에서 데이터를 새로 받아오는 함수 생성
+  const handleViewResult = async () => {
+    if (!activeAudioId) return alert("음성파일을 선택해 주세요.");
+
+    const token = sessionStorage.getItem('accessToken');
+    if (token) {
+      try {
+        // 1. 오디오 URL 갱신 (선택사항이지만 재생을 위해 추가)
+        const urlRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}/presigned-url`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (urlRes.ok) {
+          const urlData = await urlRes.json();
+          setAudioList(prev => prev.map(a => a.id === activeAudioId ? { ...a, audioUrl: urlData.data.presignedUrl } : a));
+        }
+
+        // 2. 서버에서 새로운 분석 결과 가져오기
+        const analysisRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/analysis/${activeAudioId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (analysisRes.ok) {
+          const analysisData = await analysisRes.json();
+          if (setAnalysisResult) setAnalysisResult(analysisData.data.result);
+        }
+      } catch (error) {
+        console.error("데이터 불러오기 에러:", error);
+      }
+    }
+    
+    // 데이터 통신 후 화면 전환
+    setViewStep('detail');
   };
 
   if (viewStep === 'list') {
@@ -96,10 +130,7 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult 
           {isLoggedIn && (
             <div className="m-bottom-button-group">
               <button className="m-btn-action-delete" onClick={handleDelete}>삭제하기</button>
-              <button className="m-btn-action-analyze" onClick={() => {
-                if (!activeAudioId) return alert("음성파일을 선택해 주세요.");
-                setViewStep('detail');
-              }}>결과보기</button>
+              <button className="m-btn-action-analyze" onClick={handleViewResult}>결과보기</button>
             </div>
           )}
         </div>

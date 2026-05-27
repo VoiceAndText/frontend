@@ -161,7 +161,8 @@ const ResultPage = () => {
         uploadedId={uploadedId} 
         audioList={audioList} 
         setAudioList={setAudioList} 
-        analysisResult={analysisResult} 
+        analysisResult={analysisResult}
+        setAnalysisResult={setAnalysisResult}
       />
     );
   }
