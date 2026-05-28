@@ -68,7 +68,7 @@ const MobileSidebar = ({ isOpen, onClose, isLoggedIn, isAdmin, onLogout, onLogin
                 <div className="menu-item-wrapper" onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}>
                   <div className="menu-item-main">
                     <img src={AdminIcon} alt="Admin" className="menu-icon-img" />
-                    <span>관리자 설정</span>
+                    <span>관리자 메뉴</span>
                   </div>
                   <span className="admin-arrow">{isAdminMenuOpen ? '▲' : '▼'}</span>
                 </div>
