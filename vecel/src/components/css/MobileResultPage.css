@@ -11,9 +11,9 @@
   left: 0;
   width: 100% !important;
   max-width: 100% !important;
-  height: calc(100vh - 80px) !important; 
-  max-height: calc(100vh - 80px) !important;
-  padding: 10px 0 4px 0 !important;
+  height: calc(100vh - 100px) !important; 
+  max-height: calc(100vh - 100px) !important;
+  padding: 10px 0 20px 0 !important;
   background-color: #fcfcfc;
   display: flex;
   flex-direction: column;
@@ -115,7 +115,7 @@
   width: 90% !important;
   max-width: 90% !important;
   padding-bottom: 20px; 
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .m-bottom-button-group button {
