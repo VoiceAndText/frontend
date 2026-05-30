@@ -73,7 +73,9 @@ const SummaryChartView = ({ pts, primaryEmotion, dissonanceIndex }) => {
           
           {pts.map((p, i) => {
             const x = padding + (i / (pts.length - 1 || 1) * (chartW - padding * 2));
-            const timeLabel = p.time_range.split(' ')[0];
+            const rawTime = p.time_range.split('-')[0].trim(); 
+            const numericTime = parseFloat(rawTime.replace('s', ''));
+            const timeLabel = !isNaN(numericTime) ? `${Math.round(numericTime)}s` : rawTime;
             return (
               <g key={i}>
                 <text x={x} y={chartH - padding + 18} textAnchor="middle" className="chart-axis-text-sm" fill="#999" fontSize="10">{timeLabel}</text>
