@@ -4,6 +4,7 @@ import TextView from './TextView';
 import AnalysisView from './AnalysisView';
 import MobileResultPage from './MobileResultPage';
 import '../css/ResultPage.css';
+import { fetchWithAuth } from './api';
 
 const ResultPage = () => {
   const location = useLocation();
@@ -67,9 +68,8 @@ const ResultPage = () => {
       if (!token) return; 
 
       try {
-        const res = await fetch('https://voiceandtext.duckdns.org/api/v1/files?page=0&size=20', {
-          method: 'GET',
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await fetchWithAuth('/api/v1/files?page=0&size=20', {
+          method: 'GET'
         });
 
         if (res.ok) {
@@ -107,8 +107,8 @@ const ResultPage = () => {
     if (!token) return;
 
     try {
-      const urlRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${id}/presigned-url`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const urlRes = await fetchWithAuth(`/api/v1/files/${id}/presigned-url`, {
+        method: 'GET'
       });
       if (urlRes.ok) {
         const urlData = await urlRes.json();
@@ -117,8 +117,8 @@ const ResultPage = () => {
         ));
       }
 
-      const analysisRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/analysis/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const analysisRes = await fetchWithAuth(`/api/v1/analysis/${id}`, {
+        method: 'GET'
       });
       if (analysisRes.ok) {
         const analysisData = await analysisRes.json();
@@ -175,11 +175,8 @@ const ResultPage = () => {
 
     try {
       if (token) {
-        const res = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const res = await fetchWithAuth(`/api/v1/files/${activeAudioId}`, {
+          method: 'DELETE'
         });
 
         if (!res.ok) {
