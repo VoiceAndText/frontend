@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import TextView from './TextView';
 import AnalysisView from './AnalysisView';
 import '../css/MobileResultPage.css';
+import { fetchWithAuth } from './api';
 
 const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult, setAnalysisResult }) => {
   const [activeAudioId, setActiveAudioId] = useState(uploadedId ? Number(uploadedId) : null);
@@ -54,11 +55,8 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult,
 
     try {
       if (token) {
-        const res = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const res = await fetchWithAuth(`/api/v1/files/${activeAudioId}`, {
+          method: 'DELETE'
         });
 
         if (!res.ok) {
@@ -91,8 +89,8 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult,
     if (!token) return;
 
     try {
-      const urlRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${id}/presigned-url`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const urlRes = await fetchWithAuth(`/api/v1/files/${id}/presigned-url`, {
+        method: 'GET'
       });
       if (urlRes.ok) {
         const urlData = await urlRes.json();
@@ -119,16 +117,16 @@ const MobileResultPage = ({ uploadedId, audioList, setAudioList, analysisResult,
     const token = sessionStorage.getItem('accessToken');
     if (token) {
       try {
-        const urlRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/files/${activeAudioId}/presigned-url`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const urlRes = await fetchWithAuth(`/api/v1/files/${activeAudioId}/presigned-url`, {
+          method: 'GET'
         });
         if (urlRes.ok) {
           const urlData = await urlRes.json();
           setAudioList(prev => prev.map(a => a.id === activeAudioId ? { ...a, audioUrl: urlData.data.presignedUrl } : a));
         }
 
-        const analysisRes = await fetch(`https://voiceandtext.duckdns.org/api/v1/analysis/${activeAudioId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const analysisRes = await fetchWithAuth(`/api/v1/analysis/${activeAudioId}`, {
+          method: 'GET'
         });
         if (analysisRes.ok) {
           const analysisData = await analysisRes.json();
