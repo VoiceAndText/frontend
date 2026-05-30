@@ -29,7 +29,10 @@ export const fetchWithAuth = async (url, options = {}) => {
       });
 
       if (refreshRes.ok) {
-        const refreshData = await refreshRes.json();
+        const refreshJson = await refreshRes.json();
+        
+        // ✨ 백엔드의 응답 구조에 맞게 data 껍데기를 벗겨줍니다.
+        const refreshData = refreshJson.data ? refreshJson.data : refreshJson;
         
         sessionStorage.setItem('accessToken', refreshData.accessToken);
 
