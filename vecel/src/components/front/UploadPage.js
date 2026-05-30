@@ -169,17 +169,52 @@ const UploadPage = () => {
       const formData = new FormData();
       formData.append('audio', selectedFile);
 
-      const token = sessionStorage.getItem('accessToken');
-      const headers = {};
+      let token = sessionStorage.getItem('accessToken');
+      let headers = {};
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await fetch(url.toString(), {
+      let res = await fetch(url.toString(), {
         method: 'POST',
         headers: headers,
         body: formData,
       });
+
+      if (res.status === 401 && token) {
+        console.log("업로드 중 Access Token 만료 감지. 재발급 시도...");
+        const refreshToken = sessionStorage.getItem('refreshToken');
+
+        if (refreshToken) {
+          const refreshRes = await fetch('https://voiceandtext.duckdns.org/api/v1/auth/token-refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken })
+          });
+
+          if (refreshRes.ok) {
+            const refreshData = await refreshRes.json();
+            const newToken = refreshData.accessToken;
+            
+            sessionStorage.setItem('accessToken', newToken);
+            if (refreshData.refreshToken) {
+              sessionStorage.setItem('refreshToken', refreshData.refreshToken);
+            }
+
+            headers['Authorization'] = `Bearer ${newToken}`;
+            res = await fetch(url.toString(), {
+              method: 'POST',
+              headers: headers,
+              body: formData,
+            });
+          } else {
+            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+            sessionStorage.clear();
+            window.location.href = '/';
+            return;
+          }
+        }
+      }
 
       const resData = await res.json();
 
