@@ -1,7 +1,8 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/UploadPage.css';
-import Record from './Record.js'; 
+import Record from './Record.js';
+import { fetchWithAuth } from './api';
 
 const UploadPage = () => {
   const navigate = useNavigate();
@@ -83,25 +84,27 @@ const UploadPage = () => {
     intervalRef.current = setInterval(async () => {
       try {
         const activeToken = sessionStorage.getItem('accessToken');
-        
-        let pollUrl = activeToken 
-          ? `https://voiceandtext.duckdns.org/api/v1/analysis/${analysisRequestId}`
-          : `https://voiceandtext.duckdns.org/api/v1/analysis/guest/${analysisRequestId}?token=${guestResultToken}`;
+        let res;
 
-        const headers = {};
-        if (activeToken) {
-          headers['Authorization'] = `Bearer ${activeToken}`;
+        // "undefined" 글자가 저장된 엣지 케이스까지 방어합니다.
+        if (activeToken && activeToken !== "undefined") {
+          // 💡 회원: 자동 갱신 기능이 있는 fetchWithAuth 사용
+          res = await fetchWithAuth(`/api/v1/analysis/${analysisRequestId}`, {
+            method: 'GET'
+          });
+        } else {
+          // 💡 비회원: 기존 fetch (게스트 토큰 포함)
+          res = await fetch(`https://voiceandtext.duckdns.org/api/v1/analysis/guest/${analysisRequestId}?token=${guestResultToken}`, {
+            method: 'GET'
+          });
         }
 
-        const res = await fetch(pollUrl, {
-          method: 'GET',
-          headers: headers
-        });
-
         if (res.ok) {
-          const resultData = await res.json();
+          const resultJson = await res.json();
+          // ✨ 껍데기 안전하게 벗기기
+          const resultData = resultJson.data ? resultJson.data : resultJson;
 
-          if (resultData.success && resultData.data && resultData.data.result) { 
+          if (resultData.result) { 
             if (intervalRef.current) clearInterval(intervalRef.current);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             intervalRef.current = null;
@@ -110,24 +113,17 @@ const UploadPage = () => {
             setIsUploading(false);
             alert('분석이 완료되었습니다!');
             
-            if (activeToken) {
-              navigate(`/results?id=${analysisRequestId}`, {
-                state: {
-                  analysisResult: resultData.data.result,
-                  audioUrl: previewUrl,
-                  fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
-                  fileDuration: audioDuration
-                }
-              });
+            const stateData = {
+              analysisResult: resultData.result,
+              audioUrl: previewUrl,
+              fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
+              fileDuration: audioDuration
+            };
+
+            if (activeToken && activeToken !== "undefined") {
+              navigate(`/results?id=${analysisRequestId}`, { state: stateData });
             } else {
-              navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`, {
-                state: {
-                  analysisResult: resultData.data.result,
-                  audioUrl: previewUrl,
-                  fileName: selectedFile ? selectedFile.name : '녹음된 음성 파일.wav', 
-                  fileDuration: audioDuration
-                }
-              });
+              navigate(`/results?id=${analysisRequestId}&token=${guestResultToken}`, { state: stateData });
             }
           }
         }
@@ -181,6 +177,7 @@ const UploadPage = () => {
         body: formData,
       });
 
+      // ✨ 2. 로그인 상태인데 토큰이 만료(401)되었다면 갱신 시도 ✨
       if (res.status === 401 && token) {
         console.log("업로드 중 Access Token 만료 감지. 재발급 시도...");
         const refreshToken = sessionStorage.getItem('refreshToken');
@@ -193,7 +190,10 @@ const UploadPage = () => {
           });
 
           if (refreshRes.ok) {
-            const refreshData = await refreshRes.json();
+            const refreshJson = await refreshRes.json();
+            
+            // ✨ 백엔드 응답 구조에 맞게 껍데기를 까줍니다!
+            const refreshData = refreshJson.data ? refreshJson.data : refreshJson;
             const newToken = refreshData.accessToken;
             
             sessionStorage.setItem('accessToken', newToken);
@@ -201,6 +201,7 @@ const UploadPage = () => {
               sessionStorage.setItem('refreshToken', refreshData.refreshToken);
             }
 
+            // 3. 발급받은 새 토큰으로 헤더를 교체하고 2차 업로드 (재시도)
             headers['Authorization'] = `Bearer ${newToken}`;
             res = await fetch(url.toString(), {
               method: 'POST',
