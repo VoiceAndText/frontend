@@ -26,7 +26,7 @@ const ResultPage = () => {
   const isLoggedIn = !!sessionStorage.getItem('accessToken');
 
   const formatTime = (time) => {
-    if (!time || isNaN(time)) return '00:00';
+    if (!time || isNaN(time) || time === Infinity) return '00:00';
     const m = Math.floor(time / 60).toString().padStart(2, '0');
     const s = Math.floor(time % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
@@ -215,7 +215,18 @@ const ResultPage = () => {
             ref={audioRef}
             src={activeAudio.audioUrl}
             onTimeUpdate={() => setCurrentTime(audioRef.current.currentTime)}
-            onLoadedMetadata={() => setDuration(audioRef.current.duration)}
+            onLoadedMetadata={() => {
+              if (audioRef.current.duration === Infinity) {
+                audioRef.current.currentTime = 1e101; 
+                audioRef.current.ontimeupdate = () => {
+                  audioRef.current.ontimeupdate = null;
+                  audioRef.current.currentTime = 0;
+                  setDuration(audioRef.current.duration);
+                };
+              } else {
+                setDuration(audioRef.current.duration);
+              }
+            }}
             onEnded={() => { setIsPlaying(false); setCurrentTime(0); }}
           />
         )}
